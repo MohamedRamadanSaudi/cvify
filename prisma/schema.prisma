@@ -8,8 +8,20 @@ datasource db {
 }
 
 model Users {
-  id        Int      @id @default(autoincrement())
-  email     String   @unique
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  id           Int      @id @default(autoincrement())
+  email        String   @unique
+  fullName     String?
+  title        String?
+  phone        String?
+  location     String?
+  summary      String?
+  skills       String[]
+  links        Json[]
+  education    Json[]
+  experiences  Json[]
+  projects     Json[]
+  activities   Json[]
+  volunteering Json[]
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
 }

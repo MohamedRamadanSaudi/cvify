@@ -22,7 +22,10 @@ export class UsersService {
   }
 
   update(id: number, updateUserDto: UpdateUserDto) {
-    return `This action updates a #${id} user`;
+    return this.prisma.users.update({
+      where: { id },
+      data: updateUserDto,
+    });
   }
 
   remove(id: number) {
