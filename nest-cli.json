@@ -5,7 +5,7 @@
   "compilerOptions": {
     "assets": [
       {
-        "include": "mails/templates/**/*",
+        "include": "groq/prompt.md",
         "outDir": "dist/",
         "watchAssets": true
       }
