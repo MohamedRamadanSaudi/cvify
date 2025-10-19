@@ -8,55 +8,90 @@ import { TDocumentDefinitions } from 'pdfmake/interfaces';
 export class PdfGenerator {
   static generatePdf(cvData: any): Promise<Buffer> {
     const docDefinition: TDocumentDefinitions = {
+      pageMargins: [40, 60, 40, 60],
       content: [
-        // Header Section
+        // Header Section with Name
         {
-          text: cvData.fullName || 'N/A',
+          text: cvData.fullName?.toUpperCase() || 'N/A',
           style: 'header',
-          margin: [0, 0, 0, 5],
+          margin: [0, 0, 0, 8],
         },
         {
           text: cvData.title || '',
           style: 'subheader',
-          margin: [0, 0, 0, 10],
-        },
-        {
-          columns: [
-            { text: cvData.email || '', style: 'contact' },
-            { text: cvData.phone || '', style: 'contact' },
-            { text: cvData.location || '', style: 'contact' },
-          ],
-          margin: [0, 0, 0, 15],
+          margin: [0, 0, 0, 12],
         },
 
-        // Links Section
+        // Contact Information Row
+        {
+          text: [
+            ...(cvData.email
+              ? [{ text: cvData.email, link: `mailto:${cvData.email}` }]
+              : []),
+            ...(cvData.phone && cvData.email ? [{ text: '  |  ' }] : []),
+            ...(cvData.phone ? [{ text: cvData.phone }] : []),
+            ...(cvData.location && (cvData.email || cvData.phone)
+              ? [{ text: '  |  ' }]
+              : []),
+            ...(cvData.location ? [{ text: cvData.location }] : []),
+          ],
+          style: 'contact',
+          margin: [0, 0, 0, 3],
+          alignment: 'center',
+        },
+
+        // Links Row
         ...(cvData.links && cvData.links.length > 0
           ? [
               {
-                text: 'Links',
-                style: 'sectionHeader',
-                margin: [0, 10, 0, 5],
-              },
-              {
-                ul: cvData.links.map(
-                  (link: any) => `${link.type}: ${link.url}`,
-                ),
-                margin: [0, 0, 0, 10],
+                text: cvData.links.flatMap((link: any, index: number) => [
+                  ...(index > 0 ? [{ text: '  |  ', color: '#666666' }] : []),
+                  {
+                    text: `${link.type}: `,
+                    bold: true,
+                    color: '#333333',
+                  },
+                  {
+                    text: link.url,
+                    link: link.url,
+                    color: '#0066cc',
+                    decoration: 'underline',
+                  },
+                ]),
+                style: 'links',
+                margin: [0, 0, 0, 5],
+                alignment: 'center',
               },
             ]
           : []),
+
+        // Divider
+        {
+          canvas: [
+            {
+              type: 'line',
+              x1: 0,
+              y1: 0,
+              x2: 515,
+              y2: 0,
+              lineWidth: 1,
+              lineColor: '#cccccc',
+            },
+          ],
+          margin: [0, 0, 0, 12],
+        },
 
         // Summary Section
         ...(cvData.summary
           ? [
               {
-                text: 'Professional Summary',
+                text: 'PROFESSIONAL SUMMARY',
                 style: 'sectionHeader',
-                margin: [0, 10, 0, 5],
               },
               {
                 text: cvData.summary,
-                margin: [0, 0, 0, 10],
+                margin: [0, 0, 0, 12],
+                alignment: 'justify',
               },
             ]
           : []),
@@ -65,13 +100,12 @@ export class PdfGenerator {
         ...(cvData.skills && cvData.skills.length > 0
           ? [
               {
-                text: 'Skills',
+                text: 'SKILLS',
                 style: 'sectionHeader',
-                margin: [0, 10, 0, 5],
               },
               {
-                text: cvData.skills.join(' • '),
-                margin: [0, 0, 0, 10],
+                text: cvData.skills.join('  •  '),
+                margin: [0, 0, 0, 12],
               },
             ]
           : []),
@@ -80,51 +114,57 @@ export class PdfGenerator {
         ...(cvData.experiences && cvData.experiences.length > 0
           ? [
               {
-                text: 'Experience',
+                text: 'EXPERIENCE',
                 style: 'sectionHeader',
-                margin: [0, 10, 0, 5],
               },
               ...cvData.experiences.flatMap((exp: any) => [
                 {
                   columns: [
                     {
-                      text: exp.jobTitle || '',
-                      style: 'jobTitle',
+                      stack: [
+                        {
+                          text: exp.jobTitle || '',
+                          style: 'jobTitle',
+                        },
+                        {
+                          text: [
+                            { text: exp.companyName || '', style: 'company' },
+                            exp.location
+                              ? { text: ` | ${exp.location}`, style: 'company' }
+                              : {},
+                          ],
+                          margin: [0, 2, 0, 0],
+                        },
+                      ],
                       width: '*',
                     },
                     {
-                      text: `${exp.startDate || ''} - ${exp.currentlyWorking ? 'Present' : exp.endDate || ''}`,
-                      style: 'date',
-                      alignment: 'right',
+                      stack: [
+                        {
+                          text: `${exp.startDate || ''} - ${exp.currentlyWorking ? 'Present' : exp.endDate || ''}`,
+                          style: 'date',
+                          alignment: 'right',
+                        },
+                        ...(exp.employmentType
+                          ? [
+                              {
+                                text: exp.employmentType,
+                                style: 'employmentType',
+                                alignment: 'right',
+                                margin: [0, 2, 0, 0],
+                              },
+                            ]
+                          : []),
+                      ],
                       width: 'auto',
                     },
                   ],
-                  margin: [0, 5, 0, 2],
-                },
-                {
-                  columns: [
-                    {
-                      text: exp.companyName || '',
-                      style: 'company',
-                      width: '*',
-                    },
-                    {
-                      text: exp.location || '',
-                      style: 'company',
-                      width: 'auto',
-                    },
-                    {
-                      text: exp.employmentType || '',
-                      style: 'employmentType',
-                      alignment: 'right',
-                      width: 'auto',
-                    },
-                  ],
-                  margin: [0, 0, 0, 3],
+                  margin: [0, 0, 0, 4],
                 },
                 {
                   text: exp.description || '',
-                  margin: [0, 0, 0, 10],
+                  margin: [0, 0, 0, 12],
+                  alignment: 'justify',
                 },
               ]),
             ]
@@ -134,9 +174,8 @@ export class PdfGenerator {
         ...(cvData.projects && cvData.projects.length > 0
           ? [
               {
-                text: 'Projects',
+                text: 'PROJECTS',
                 style: 'sectionHeader',
-                margin: [0, 10, 0, 5],
               },
               ...cvData.projects.flatMap((project: any) => [
                 {
@@ -153,21 +192,27 @@ export class PdfGenerator {
                       width: 'auto',
                     },
                   ],
-                  margin: [0, 5, 0, 2],
+                  margin: [0, 0, 0, 4],
                 },
                 {
                   text: project.description || '',
                   margin: [0, 0, 0, 3],
+                  alignment: 'justify',
                 },
                 ...(project.technologies && project.technologies.length > 0
                   ? [
                       {
                         text: `Technologies: ${project.technologies.join(', ')}`,
                         style: 'technologies',
-                        margin: [0, 0, 0, 10],
+                        margin: [0, 0, 0, 12],
                       },
                     ]
-                  : [{ margin: [0, 0, 0, 10] }]),
+                  : [
+                      {
+                        text: '',
+                        margin: [0, 0, 0, 12],
+                      },
+                    ]),
               ]),
             ]
           : []),
@@ -176,16 +221,37 @@ export class PdfGenerator {
         ...(cvData.education && cvData.education.length > 0
           ? [
               {
-                text: 'Education',
+                text: 'EDUCATION',
                 style: 'sectionHeader',
-                margin: [0, 10, 0, 5],
               },
               ...cvData.education.flatMap((edu: any) => [
                 {
                   columns: [
                     {
-                      text: `${edu.degree || ''} in ${edu.fieldOfStudy || ''}`,
-                      style: 'jobTitle',
+                      stack: [
+                        {
+                          text: `${edu.degree || ''} in ${edu.fieldOfStudy || ''}`,
+                          style: 'jobTitle',
+                        },
+                        {
+                          text: [
+                            { text: edu.schoolName || '', style: 'company' },
+                            edu.location
+                              ? { text: ` | ${edu.location}`, style: 'company' }
+                              : {},
+                          ],
+                          margin: [0, 2, 0, 0],
+                        },
+                        ...(edu.grade
+                          ? [
+                              {
+                                text: `Grade: ${edu.grade}`,
+                                style: 'company',
+                                margin: [0, 2, 0, 0],
+                              },
+                            ]
+                          : []),
+                      ],
                       width: '*',
                     },
                     {
@@ -195,39 +261,22 @@ export class PdfGenerator {
                       width: 'auto',
                     },
                   ],
-                  margin: [0, 5, 0, 2],
+                  margin: [0, 0, 0, 4],
                 },
-                {
-                  columns: [
-                    {
-                      text: edu.schoolName || '',
-                      style: 'company',
-                      width: '*',
-                    },
-                    {
-                      text: edu.location || '',
-                      style: 'company',
-                      width: 'auto',
-                    },
-                  ],
-                  margin: [0, 0, 0, 3],
-                },
-                ...(edu.grade
-                  ? [
-                      {
-                        text: `Grade: ${edu.grade}`,
-                        margin: [0, 0, 0, 3],
-                      },
-                    ]
-                  : []),
                 ...(edu.description
                   ? [
                       {
                         text: edu.description,
-                        margin: [0, 0, 0, 10],
+                        margin: [0, 0, 0, 12],
+                        alignment: 'justify',
                       },
                     ]
-                  : [{ margin: [0, 0, 0, 10] }]),
+                  : [
+                      {
+                        text: '',
+                        margin: [0, 0, 0, 12],
+                      },
+                    ]),
               ]),
             ]
           : []),
@@ -236,16 +285,28 @@ export class PdfGenerator {
         ...(cvData.activities && cvData.activities.length > 0
           ? [
               {
-                text: 'Activities',
+                text: 'ACTIVITIES',
                 style: 'sectionHeader',
-                margin: [0, 10, 0, 5],
               },
               ...cvData.activities.flatMap((activity: any) => [
                 {
                   columns: [
                     {
-                      text: activity.title || '',
-                      style: 'jobTitle',
+                      stack: [
+                        {
+                          text: activity.title || '',
+                          style: 'jobTitle',
+                        },
+                        ...(activity.role
+                          ? [
+                              {
+                                text: activity.role,
+                                style: 'company',
+                                margin: [0, 2, 0, 0],
+                              },
+                            ]
+                          : []),
+                      ],
                       width: '*',
                     },
                     {
@@ -255,20 +316,12 @@ export class PdfGenerator {
                       width: 'auto',
                     },
                   ],
-                  margin: [0, 5, 0, 2],
+                  margin: [0, 0, 0, 4],
                 },
-                ...(activity.role
-                  ? [
-                      {
-                        text: activity.role,
-                        style: 'company',
-                        margin: [0, 0, 0, 3],
-                      },
-                    ]
-                  : []),
                 {
                   text: activity.description || '',
-                  margin: [0, 0, 0, 10],
+                  margin: [0, 0, 0, 12],
+                  alignment: 'justify',
                 },
               ]),
             ]
@@ -278,16 +331,31 @@ export class PdfGenerator {
         ...(cvData.volunteering && cvData.volunteering.length > 0
           ? [
               {
-                text: 'Volunteering',
+                text: 'VOLUNTEERING',
                 style: 'sectionHeader',
-                margin: [0, 10, 0, 5],
               },
               ...cvData.volunteering.flatMap((vol: any) => [
                 {
                   columns: [
                     {
-                      text: vol.role || '',
-                      style: 'jobTitle',
+                      stack: [
+                        {
+                          text: vol.role || '',
+                          style: 'jobTitle',
+                        },
+                        {
+                          text: [
+                            {
+                              text: vol.organizationName || '',
+                              style: 'company',
+                            },
+                            vol.location
+                              ? { text: ` | ${vol.location}`, style: 'company' }
+                              : {},
+                          ],
+                          margin: [0, 2, 0, 0],
+                        },
+                      ],
                       width: '*',
                     },
                     {
@@ -297,26 +365,12 @@ export class PdfGenerator {
                       width: 'auto',
                     },
                   ],
-                  margin: [0, 5, 0, 2],
-                },
-                {
-                  columns: [
-                    {
-                      text: vol.organizationName || '',
-                      style: 'company',
-                      width: '*',
-                    },
-                    {
-                      text: vol.location || '',
-                      style: 'company',
-                      width: 'auto',
-                    },
-                  ],
-                  margin: [0, 0, 0, 3],
+                  margin: [0, 0, 0, 4],
                 },
                 {
                   text: vol.description || '',
-                  margin: [0, 0, 0, 10],
+                  margin: [0, 0, 0, 12],
+                  alignment: 'justify',
                 },
               ]),
             ]
@@ -324,50 +378,58 @@ export class PdfGenerator {
       ],
       styles: {
         header: {
-          fontSize: 24,
+          fontSize: 22,
           bold: true,
-          color: '#2c3e50',
+          color: '#000000',
+          characterSpacing: 1,
         },
         subheader: {
-          fontSize: 16,
-          color: '#34495e',
+          fontSize: 13,
+          color: '#555555',
+          bold: false,
         },
         contact: {
-          fontSize: 10,
-          color: '#7f8c8d',
+          fontSize: 8.5,
+          color: '#666666',
+        },
+        links: {
+          fontSize: 8,
+          color: '#666666',
         },
         sectionHeader: {
-          fontSize: 14,
-          bold: true,
-          color: '#2c3e50',
-          decoration: 'underline',
-        },
-        jobTitle: {
           fontSize: 12,
           bold: true,
+          color: '#000000',
+          margin: [0, 8, 0, 8],
+        },
+        jobTitle: {
+          fontSize: 11,
+          bold: true,
+          color: '#000000',
         },
         company: {
-          fontSize: 11,
-          color: '#34495e',
-          italics: true,
+          fontSize: 10,
+          color: '#333333',
         },
         date: {
-          fontSize: 10,
-          color: '#7f8c8d',
+          fontSize: 9,
+          color: '#666666',
         },
         employmentType: {
-          fontSize: 10,
-          color: '#7f8c8d',
+          fontSize: 9,
+          color: '#666666',
+          italics: true,
         },
         technologies: {
-          fontSize: 10,
-          color: '#16a085',
+          fontSize: 9,
+          color: '#0066cc',
           italics: true,
         },
       },
       defaultStyle: {
-        fontSize: 11,
-        color: '#2c3e50',
+        fontSize: 10,
+        color: '#333333',
+        lineHeight: 1.3,
       },
     };
 
