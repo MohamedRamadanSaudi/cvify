@@ -1,0 +1,425 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>CVify - AI-Powered CV Generator</title>
+    <link rel="stylesheet" href="/styles.css" />
+  </head>
+  <body>
+    <!-- Loading Overlay -->
+    <div id="loadingOverlay" class="loading-overlay hidden">
+      <div class="spinner"></div>
+      <p>Processing...</p>
+    </div>
+
+    <!-- Main Container -->
+    <div id="app" class="container">
+      <!-- Profiles View -->
+      <div id="profilesView" class="view active">
+        <header class="header">
+          <h1>CVify</h1>
+          <p class="subtitle">
+            Manage your profiles and generate AI-powered CVs
+          </p>
+        </header>
+
+        <div class="action-bar">
+          <button id="createProfileBtn" class="btn btn-primary">
+            <span class="btn-icon">+</span>
+            Create New Profile
+          </button>
+        </div>
+
+        <div id="profilesList" class="profiles-grid">
+          <!-- Profiles will be loaded here -->
+        </div>
+      </div>
+
+      <!-- Create Profile View -->
+      <div id="createProfileView" class="view">
+        <div class="form-container">
+          <button id="backFromCreateBtn" class="btn-back">← Back</button>
+
+          <h2>Create New Profile</h2>
+
+          <form id="createProfileForm" class="form">
+            <div class="form-group">
+              <label for="profileName">Profile Name (unique)</label>
+              <input
+                type="text"
+                id="profileName"
+                name="profileName"
+                placeholder="e.g., John Doe - Software Engineer"
+                required
+              />
+              <small>Choose a unique name to identify this profile</small>
+            </div>
+
+            <div class="form-group">
+              <label for="email">Email Address</label>
+              <input
+                type="email"
+                id="email"
+                name="email"
+                placeholder="your.email@example.com"
+                required
+              />
+            </div>
+
+            <button type="submit" class="btn btn-primary btn-block">
+              Create Profile
+            </button>
+          </form>
+        </div>
+      </div>
+
+      <!-- Profile Detail View -->
+      <div id="profileDetailView" class="view">
+        <div class="detail-container">
+          <button id="backFromDetailBtn" class="btn-back">← Back</button>
+
+          <div class="profile-header">
+            <h2 id="profileDetailName"></h2>
+            <p id="profileDetailEmail" class="profile-email"></p>
+          </div>
+
+          <div class="action-buttons">
+            <button id="editProfileBtn" class="btn btn-primary">
+              <span class="btn-icon">✏️</span>
+              Edit Profile Data
+            </button>
+            <button id="generateCvBtn" class="btn btn-primary">
+              <span class="btn-icon">✨</span>
+              Generate CV
+            </button>
+            <button id="viewHistoryBtn" class="btn btn-secondary">
+              <span class="btn-icon">📋</span>
+              View History
+            </button>
+            <button id="deleteProfileBtn" class="btn btn-danger">
+              <span class="btn-icon">🗑️</span>
+              Delete Profile
+            </button>
+          </div>
+
+          <div class="profile-info">
+            <p class="info-text">
+              You can update profile data and generate customized CVs based on
+              job descriptions using AI.
+            </p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Edit Profile Data View -->
+      <div id="editProfileView" class="view">
+        <div class="form-container-wide">
+          <button id="backFromEditBtn" class="btn-back">← Back</button>
+
+          <h2>Edit Profile Data</h2>
+          <p class="view-subtitle">Select a section to edit</p>
+
+          <!-- Section Tabs -->
+          <div class="section-tabs">
+            <button
+              type="button"
+              class="tab-btn active"
+              onclick="switchSection('basic')"
+            >
+              Basic Info
+            </button>
+            <button
+              type="button"
+              class="tab-btn"
+              onclick="switchSection('links')"
+            >
+              Links
+            </button>
+            <button
+              type="button"
+              class="tab-btn"
+              onclick="switchSection('experience')"
+            >
+              Experience
+            </button>
+            <button
+              type="button"
+              class="tab-btn"
+              onclick="switchSection('education')"
+            >
+              Education
+            </button>
+            <button
+              type="button"
+              class="tab-btn"
+              onclick="switchSection('projects')"
+            >
+              Projects
+            </button>
+            <button
+              type="button"
+              class="tab-btn"
+              onclick="switchSection('volunteering')"
+            >
+              Volunteering
+            </button>
+            <button
+              type="button"
+              class="tab-btn"
+              onclick="switchSection('activities')"
+            >
+              Activities
+            </button>
+          </div>
+
+          <form id="editProfileForm" class="form">
+            <!-- Basic Information -->
+            <div
+              class="form-section section-content active"
+              data-section="basic"
+            >
+              <h3 class="form-section-title">Basic Information</h3>
+
+              <div class="form-row">
+                <div class="form-group">
+                  <label for="fullName">Full Name</label>
+                  <input
+                    type="text"
+                    id="fullName"
+                    name="fullName"
+                    placeholder="John Doe"
+                  />
+                </div>
+
+                <div class="form-group">
+                  <label for="title">Professional Title</label>
+                  <input
+                    type="text"
+                    id="title"
+                    name="title"
+                    placeholder="Senior Software Engineer"
+                  />
+                </div>
+              </div>
+
+              <div class="form-row">
+                <div class="form-group">
+                  <label for="phone">Phone Number</label>
+                  <input
+                    type="tel"
+                    id="phone"
+                    name="phone"
+                    placeholder="+1 (555) 123-4567"
+                  />
+                </div>
+
+                <div class="form-group">
+                  <label for="location">Location</label>
+                  <input
+                    type="text"
+                    id="location"
+                    name="location"
+                    placeholder="San Francisco, CA"
+                  />
+                </div>
+              </div>
+
+              <div class="form-group">
+                <label for="summary">Professional Summary</label>
+                <textarea
+                  id="summary"
+                  name="summary"
+                  rows="4"
+                  placeholder="Brief overview of your professional background..."
+                ></textarea>
+              </div>
+
+              <div class="form-group">
+                <label for="skills">Skills (comma-separated)</label>
+                <textarea
+                  id="skills"
+                  name="skills"
+                  rows="3"
+                  placeholder="JavaScript, React, Node.js, Python, AWS"
+                ></textarea>
+                <small>Separate skills with commas</small>
+              </div>
+            </div>
+
+            <!-- Links -->
+            <div class="form-section section-content" data-section="links">
+              <h3 class="form-section-title">
+                Links
+                <button type="button" class="btn-add" onclick="addLink()">
+                  + Add Link
+                </button>
+              </h3>
+              <div id="linksContainer"></div>
+            </div>
+
+            <!-- Work Experience -->
+            <div class="form-section section-content" data-section="experience">
+              <h3 class="form-section-title">
+                Work Experience
+                <button type="button" class="btn-add" onclick="addExperience()">
+                  + Add Experience
+                </button>
+              </h3>
+              <div id="experiencesContainer"></div>
+            </div>
+
+            <!-- Education -->
+            <div class="form-section section-content" data-section="education">
+              <h3 class="form-section-title">
+                Education
+                <button type="button" class="btn-add" onclick="addEducation()">
+                  + Add Education
+                </button>
+              </h3>
+              <div id="educationContainer"></div>
+            </div>
+
+            <!-- Projects -->
+            <div class="form-section section-content" data-section="projects">
+              <h3 class="form-section-title">
+                Projects
+                <button type="button" class="btn-add" onclick="addProject()">
+                  + Add Project
+                </button>
+              </h3>
+              <div id="projectsContainer"></div>
+            </div>
+
+            <!-- Volunteering -->
+            <div
+              class="form-section section-content"
+              data-section="volunteering"
+            >
+              <h3 class="form-section-title">
+                Volunteering
+                <button
+                  type="button"
+                  class="btn-add"
+                  onclick="addVolunteering()"
+                >
+                  + Add Volunteering
+                </button>
+              </h3>
+              <div id="volunteeringContainer"></div>
+            </div>
+
+            <!-- Activities -->
+            <div class="form-section section-content" data-section="activities">
+              <h3 class="form-section-title">
+                Activities
+                <button type="button" class="btn-add" onclick="addActivity()">
+                  + Add Activity
+                </button>
+              </h3>
+              <div id="activitiesContainer"></div>
+            </div>
+
+            <div class="form-actions">
+              <button
+                type="button"
+                class="btn btn-secondary"
+                onclick="showView('profileDetail')"
+              >
+                Cancel
+              </button>
+              <button type="submit" class="btn btn-primary">
+                <span class="btn-icon">💾</span>
+                Save Profile
+              </button>
+            </div>
+          </form>
+        </div>
+      </div>
+
+      <!-- Generate CV View -->
+      <div id="generateCvView" class="view">
+        <div class="form-container">
+          <button id="backFromGenerateBtn" class="btn-back">← Back</button>
+
+          <h2>Generate CV with AI</h2>
+          <p class="view-subtitle">
+            Select a profile and paste the job description
+          </p>
+
+          <form id="generateCvForm" class="form">
+            <div class="form-group">
+              <label for="selectProfile">Select Profile</label>
+              <select id="selectProfile" name="profileId" required>
+                <option value="">Choose a profile...</option>
+              </select>
+            </div>
+
+            <div class="form-group">
+              <label for="jobDescription">Job Description</label>
+              <textarea
+                id="jobDescription"
+                name="jobDescription"
+                rows="12"
+                placeholder="Paste the complete job description here...&#10;&#10;The AI will analyze the requirements and tailor your CV accordingly."
+                required
+              ></textarea>
+              <small>Paste the job posting or job requirements here</small>
+            </div>
+
+            <button type="submit" class="btn btn-primary btn-block">
+              <span class="btn-icon">✨</span>
+              Generate CV by AI
+            </button>
+          </form>
+        </div>
+      </div>
+
+      <!-- History View -->
+      <div id="historyView" class="view">
+        <div class="history-container">
+          <button id="backFromHistoryBtn" class="btn-back">← Back</button>
+
+          <h2>CV History</h2>
+          <p id="historyProfileName" class="view-subtitle"></p>
+
+          <div id="historyList" class="history-list">
+            <!-- CV history items will be loaded here -->
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Toast Notification -->
+    <div id="toast" class="toast"></div>
+
+    <!-- Regenerate Modal -->
+    <div id="regenerateModal" class="modal">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h2>Edit CV Data</h2>
+          <button class="modal-close" onclick="closeRegenerateModal()">
+            ×
+          </button>
+        </div>
+        <div class="modal-body">
+          <p class="modal-description">
+            Edit the JSON data below and click Save to regenerate the CV with
+            your changes.
+          </p>
+          <textarea id="cvJsonData" class="json-editor" rows="20"></textarea>
+        </div>
+        <div class="modal-footer">
+          <button class="btn btn-secondary" onclick="closeRegenerateModal()">
+            Cancel
+          </button>
+          <button id="saveCvDataBtn" class="btn btn-primary">
+            Save & Regenerate
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <script src="/app.js"></script>
+  </body>
+</html>

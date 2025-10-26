@@ -4,6 +4,7 @@ import {
   Delete,
   Get,
   Param,
+  Patch,
   Post,
   Res,
 } from '@nestjs/common';
@@ -46,6 +47,11 @@ export class CvsController {
   @Get('profile/:profileId')
   async findByProfile(@Param('profileId') profileId: string) {
     return this.cvsService.findByProfile(+profileId);
+  }
+
+  @Patch(':id/cv-data')
+  async updateCvData(@Param('id') id: string, @Body() cvData: any) {
+    return this.cvsService.updateCvData(+id, cvData);
   }
 
   @Get(':id/regenerate')

@@ -183,6 +183,30 @@ export class CvsService {
     return pdfBuffer;
   }
 
+  async updateCvData(id: number, cvData: any) {
+    // Validate that CV exists
+    const cv = await this.prisma.cVs.findUnique({
+      where: { id },
+    });
+
+    if (!cv) {
+      throw new Error('CV not found');
+    }
+
+    // Update the CV data
+    const updatedCv = await this.prisma.cVs.update({
+      where: { id },
+      data: { cvData },
+    });
+
+    // Regenerate PDF with new data
+    const pdfBuffer = await PdfGenerator.generatePdf(cvData);
+    const fullPath = path.join(process.cwd(), cv.pdfPath);
+    fs.writeFileSync(fullPath, pdfBuffer);
+
+    return updatedCv;
+  }
+
   async remove(id: number) {
     const cv = await this.prisma.cVs.findUnique({
       where: { id },
