@@ -14,12 +14,14 @@ export class PdfGenerator {
         {
           text: cvData.fullName?.toUpperCase() || 'N/A',
           style: 'header',
-          margin: [0, 0, 0, 8],
+          margin: [0, 0, 0, 0],
+          alignment: 'center',
         },
         {
           text: cvData.title || '',
           style: 'subheader',
-          margin: [0, 0, 0, 12],
+          margin: [0, 0, 0, 0],
+          alignment: 'center',
         },
 
         // Contact Information Row
@@ -47,15 +49,11 @@ export class PdfGenerator {
                 text: cvData.links.flatMap((link: any, index: number) => [
                   ...(index > 0 ? [{ text: '  |  ', color: '#666666' }] : []),
                   {
-                    text: `${link.type}: `,
-                    bold: true,
-                    color: '#333333',
-                  },
-                  {
-                    text: link.url,
+                    text: link.type,
                     link: link.url,
                     color: '#0066cc',
                     decoration: 'underline',
+                    bold: true,
                   },
                 ]),
                 style: 'links',
@@ -85,7 +83,7 @@ export class PdfGenerator {
         ...(cvData.summary
           ? [
               {
-                text: 'PROFESSIONAL SUMMARY',
+                text: 'SUMMARY',
                 style: 'sectionHeader',
               },
               {
@@ -114,7 +112,7 @@ export class PdfGenerator {
         ...(cvData.experiences && cvData.experiences.length > 0
           ? [
               {
-                text: 'EXPERIENCE',
+                text: 'PROFESSIONAL EXPERIENCE',
                 style: 'sectionHeader',
               },
               ...cvData.experiences.flatMap((exp: any) => [
