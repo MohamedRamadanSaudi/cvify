@@ -1,6 +1,6 @@
-import { Link } from './link.interface';
+import { Link } from './link.type';
 
-export interface Project {
+export type Project = {
   title: string;
   description?: string;
   technologies?: string[];
@@ -8,5 +8,4 @@ export interface Project {
   startDate: string;
   endDate?: string;
   currentlyOngoing?: boolean;
-  [key: string]: any;
-}
+};

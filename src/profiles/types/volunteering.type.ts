@@ -1,4 +1,4 @@
-export interface Volunteering {
+export type Volunteering = {
   organizationName: string;
   description?: string;
   role: string;
@@ -6,5 +6,4 @@ export interface Volunteering {
   startDate: string;
   endDate?: string;
   currentlyVolunteering?: boolean;
-  [key: string]: any;
-}
+};

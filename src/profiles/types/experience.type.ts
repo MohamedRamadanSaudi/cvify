@@ -1,4 +1,4 @@
-export interface Experience {
+export type Experience = {
   jobTitle: string;
   companyName: string;
   employmentType?: string;
@@ -7,5 +7,4 @@ export interface Experience {
   endDate?: string;
   currentlyWorking?: boolean;
   description?: string;
-  [key: string]: any;
-}
+};

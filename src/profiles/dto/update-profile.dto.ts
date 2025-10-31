@@ -1,10 +1,10 @@
 import { IsOptional, IsString } from 'class-validator';
-import { Activity } from '../interfaces/activity.interface';
-import { Education } from '../interfaces/education.interface';
-import { Experience } from '../interfaces/experience.interface';
-import { Link } from '../interfaces/link.interface';
-import { Project } from '../interfaces/project.interface';
-import { Volunteering } from '../interfaces/volunteering.interface';
+import { Activity } from '../types/activity.type';
+import { Education } from '../types/education.type';
+import { Experience } from '../types/experience.type';
+import { Link } from '../types/link.type';
+import { Project } from '../types/project.type';
+import { Volunteering } from '../types/volunteering.type';
 
 export class UpdateProfileDto {
   @IsOptional()

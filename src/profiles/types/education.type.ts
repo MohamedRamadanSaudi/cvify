@@ -1,4 +1,4 @@
-export interface Education {
+export type Education = {
   schoolName: string;
   degree: string;
   fieldOfStudy: string;
@@ -8,5 +8,4 @@ export interface Education {
   description?: string;
   location?: string;
   currentlyStudying?: boolean;
-  [key: string]: any;
-}
+};
