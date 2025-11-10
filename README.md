@@ -18,7 +18,26 @@ Built with NestJS, Bun, Prisma, PostgreSQL, and Groq AI.
 ```bash
 git clone <your-repo-url>
 cd cvify
+```
+
+**Copy the .env file:**
+
+Linux/Mac:
+
+```bash
 cp .env.example .env
+```
+
+Windows (PowerShell):
+
+```powershell
+Copy-Item .env.example .env
+```
+
+Windows (Command Prompt):
+
+```cmd
+copy .env.example .env
 ```
 
 Edit `.env` and add your **Groq API key**:
@@ -74,6 +93,8 @@ docker compose down -v && docker compose up -d
 
 ### Access Database
 
+**Linux/Mac/Windows (all shells):**
+
 ```bash
 docker compose exec postgres psql -U cvify -d cvify_db
 ```
@@ -95,11 +116,25 @@ docker compose exec app bunx prisma studio
 
 If you want to run without Docker:
 
-```bash
-# Install Bun
-curl -fsSL https://bun.sh/install | bash  # Mac/Linux
-# Or visit: https://bun.sh/docs/installation
+**Install Bun:**
 
+Linux/Mac:
+
+```bash
+curl -fsSL https://bun.sh/install | bash
+```
+
+Windows:
+
+```powershell
+powershell -c "irm bun.sh/install.ps1 | iex"
+```
+
+Or visit: https://bun.sh/docs/installation
+
+**Then run:**
+
+```bash
 # Install dependencies
 bun install
 bunx prisma generate
