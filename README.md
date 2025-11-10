@@ -10,7 +10,7 @@ Built with NestJS, Bun, Prisma, PostgreSQL, and Groq AI.
 
 ### Prerequisites
 
-- [Docker Desktop](https://www.docker.com/get-started) installed
+- [Docker Desktop](https://www.docker.com/get-started) installed (includes Docker Compose)
 - That's it! Everything else runs in Docker.
 
 ### Step 1: Clone & Setup
