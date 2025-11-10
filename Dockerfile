@@ -1,19 +1,15 @@
-# Build stage
-FROM oven/bun:1-alpine AS builder
-
+# Use Bun as base image
+FROM oven/bun:1 AS base
 WORKDIR /app
 
-# Copy package files
-COPY package.json ./
-# Copy bun.lockb only if it exists
-COPY bun.lock* ./
-
-COPY prisma ./prisma/
-
 # Install dependencies
-RUN bun install
+FROM base AS install
+COPY package.json bun.lock* ./
+RUN bun install --frozen-lockfile
 
-# Copy source code
+# Copy application code
+FROM base AS build
+COPY --from=install /app/node_modules ./node_modules
 COPY . .
 
 # Generate Prisma Client
@@ -22,42 +18,20 @@ RUN bunx prisma generate
 # Build the application
 RUN bun run build
 
-# Production stage
-FROM oven/bun:1-alpine
+# Production image
+FROM base AS production
+COPY --from=build /app/node_modules ./node_modules
+COPY --from=build /app/dist ./dist
+COPY --from=build /app/generated ./generated
+COPY --from=build /app/prisma ./prisma
+COPY --from=build /app/public ./public
+COPY --from=build /app/package.json ./
 
-WORKDIR /app
-
-# Install dumb-init for proper signal handling
-RUN apk add --no-cache dumb-init
-
-# Copy package files
-COPY package.json ./
-COPY bun.lock* ./
-
-COPY prisma ./prisma/
-
-# Install production dependencies only
-RUN bun install --production
-
-# Copy built application from builder
-COPY --from=builder /app/dist ./dist
-COPY --from=builder /app/generated ./generated
-
-# Copy public directory
-COPY public ./public
-
-# Create necessary directories with proper permissions
-RUN mkdir -p uploads/cvs generated && \
-    chown -R bun:bun /app
-
-# Switch to non-root user
-USER bun
+# Create uploads directory
+RUN mkdir -p /app/uploads/cvs
 
 # Expose port
 EXPOSE 3000
 
-# Use dumb-init to handle signals properly
-ENTRYPOINT ["dumb-init", "--"]
-
 # Start the application
-CMD ["bun", "run", "dist/main.js"]
+CMD ["sh", "-c", "bunx prisma migrate deploy && bun run start:prod"]

@@ -1,268 +1,166 @@
-# Cvify - Self-Hosted Setup
+# Cvify
 
-A self-hosted CV generation and management platform powered by AI.
+> Self-hosted CV generation and management platform powered by AI
 
-Built with NestJS, Prisma, PostgreSQL, and powered by Groq AI. Uses Bun as the package manager for blazing-fast performance.
+Built with NestJS, Bun, Prisma, PostgreSQL, and Groq AI.
 
-## Prerequisites
+---
 
-- Docker Desktop (includes Docker Compose)
-- That's it! No need to install Node.js, Bun, PostgreSQL, or any other dependencies.
+## 🚀 Quick Start (3 Steps)
 
-## Technology Stack
+### Prerequisites
 
-- **Runtime**: Bun (package manager and runtime)
-- **Framework**: NestJS
-- **Database**: PostgreSQL
-- **ORM**: Prisma
-- **AI**: Groq API
-- **PDF Generation**: PDFMake
+- [Docker Desktop](https://www.docker.com/get-started) installed
+- That's it! Everything else runs in Docker.
 
-## Quick Start
-
-### 1. Clone the Repository
+### Step 1: Clone & Setup
 
 ```bash
 git clone <your-repo-url>
 cd cvify
-```
-
-### 2. Pre-flight Check (Recommended)
-
-Run the preflight check script to verify your environment:
-
-**PowerShell (Windows):**
-
-```powershell
-.\preflight-check.ps1
-```
-
-**Bash (Linux/Mac):**
-
-```bash
-# Coming soon - for now, manually check Docker and .env
-```
-
-This will verify:
-
-- Docker is installed and running
-- All required files exist
-- Ports are available
-- Environment is configured
-
-### 3. Configure Environment Variables
-
-Copy the example environment file and add your Groq API key:
-
-**PowerShell (Windows):**
-
-```powershell
-Copy-Item .env.example .env
-```
-
-**Bash (Linux/Mac):**
-
-```bash
 cp .env.example .env
 ```
 
-Edit `.env` and replace `your_groq_api_key_here` with your actual Groq API key:
+Edit `.env` and add your **Groq API key**:
 
-```bash
-GROQ_API_KEY=gsk_your_actual_api_key_here
+```
+GROQ_API_KEY=gsk_your_actual_key_here
 ```
 
-Get your Groq API key from: https://console.groq.com
+Get your free API key from: https://console.groq.com
 
-### 4. Run the Application
-
-Start everything with a single command:
+### Step 2: Run
 
 ```bash
 docker compose up -d
 ```
 
-This will:
+Docker will automatically:
 
-- Pull and start PostgreSQL database
-- Build the application Docker image (with Bun runtime)
-- Generate Prisma Client
-- Run database migrations
-- Start the application server
+- ✅ Start PostgreSQL database
+- ✅ Build the app with Bun
+- ✅ Run database migrations
+- ✅ Start the server
 
-**First-time build**: The initial build may take 2-3 minutes as Docker downloads base images and installs dependencies.
+_First build takes ~2 minutes_
 
-### 5. Access the Application
+### Step 3: Open
 
-The application will be available at:
+Go to: **http://localhost:3000**
 
-- **Frontend**: http://localhost:3000
-- **API Base**: http://localhost:3000/api
+That's it! 🎉
 
-## Management Commands
+---
 
-### View Logs
+## 📋 Common Commands
 
 ```bash
-# All services
-docker-compose logs -f
+# View logs
+docker compose logs -f
 
-# Application only
-docker-compose logs -f app
+# Stop everything
+docker compose down
 
-# Database only
-docker-compose logs -f postgres
+# Restart after code changes
+docker compose up -d --build
+
+# Reset everything (⚠️ deletes all data)
+docker compose down -v && docker compose up -d
 ```
 
-### Stop the Application
+---
 
-```bash
-docker-compose down
-```
+## 🛠️ Advanced Usage
 
-### Stop and Remove All Data (including database)
-
-```bash
-docker-compose down -v
-```
-
-### Restart the Application
-
-```bash
-docker-compose restart
-```
-
-### Rebuild After Code Changes
-
-```bash
-docker-compose up -d --build
-```
-
-### Run Prisma Commands
-
-**Note**: We use `bunx` instead of `npx` since the app uses Bun as the runtime.
-
-```bash
-# Generate Prisma Client
-docker compose exec app bunx prisma generate
-
-# Run migrations
-docker compose exec app bunx prisma migrate deploy
-
-# Create a new migration
-docker compose exec app bunx prisma migrate dev --name your_migration_name
-
-# Open Prisma Studio (Database GUI)
-docker compose exec app bunx prisma studio
-```
-
-### Access Database Directly
+### Access Database
 
 ```bash
 docker compose exec postgres psql -U cvify -d cvify_db
 ```
 
-### Install Dependencies Locally (Optional)
-
-If you want to run the app locally without Docker or get IDE autocompletion:
-
-**Install Bun** (if not already installed):
+### Run Prisma Commands
 
 ```bash
-# Windows (PowerShell)
-powershell -c "irm bun.sh/install.ps1 | iex"
+# Generate Prisma Client
+docker compose exec app bunx prisma generate
 
-# macOS/Linux
-curl -fsSL https://bun.sh/install | bash
+# Create migration
+docker compose exec app bunx prisma migrate dev --name migration_name
+
+# Open Prisma Studio
+docker compose exec app bunx prisma studio
 ```
 
-**Then install project dependencies:**
+### Local Development (Optional)
+
+If you want to run without Docker:
 
 ```bash
+# Install Bun
+curl -fsSL https://bun.sh/install | bash  # Mac/Linux
+# Or visit: https://bun.sh/docs/installation
+
+# Install dependencies
 bun install
 bunx prisma generate
-```
 
-**Run locally:**
-
-```bash
-# Development mode with hot reload
+# Run development server
 bun run start:dev
-
-# Production mode
-bun run build
-bun run start:prod
 ```
 
-## Environment Variables
+---
 
-| Variable       | Description                  | Default        |
-| -------------- | ---------------------------- | -------------- |
-| `GROQ_API_KEY` | Your Groq API key (Required) | -              |
-| `PORT`         | Application port             | 3000           |
-| `DB_USER`      | Database username            | cvify          |
-| `DB_PASSWORD`  | Database password            | cvify_password |
-| `DB_NAME`      | Database name                | cvify_db       |
-| `DB_PORT`      | Database port                | 5432           |
+## ⚙️ Configuration
 
-## Data Persistence
+### Environment Variables
 
-The following directories are persisted across container restarts:
+| Variable       | Description           | Default           | Required |
+| -------------- | --------------------- | ----------------- | -------- |
+| `GROQ_API_KEY` | Your Groq API key     | -                 | ✅       |
+| `PORT`         | Application port      | 3000              | ❌       |
+| `DATABASE_URL` | PostgreSQL connection | (auto-configured) | ❌       |
 
-- `uploads/` - User uploaded files
-- `generated/` - Generated CV files
-- `public/` - Static assets
-- Database data (stored in Docker volume `postgres_data`)
+### Data Storage
 
-## Troubleshooting
+Persistent data locations:
 
-### Port Already in Use
+- `uploads/` - Generated CV files
+- `postgres_data/` - Database (Docker volume)
 
-If port 3000 or 5432 is already in use, change it in `.env`:
+---
+
+## 🐛 Troubleshooting
+
+**Port already in use?**
 
 ```bash
-PORT=3001
-DB_PORT=5433
+# Edit docker-compose.yml and change:
+ports:
+  - "8080:3000"  # Use port 8080 instead
 ```
 
-### Database Connection Issues
-
-Wait a few seconds for the database to fully initialize, then restart the app:
+**Database connection failed?**
 
 ```bash
-docker-compose restart app
+# Wait for DB to start, then restart:
+docker compose restart app
 ```
 
-### View Application Logs
+**Something broken?**
 
 ```bash
-docker-compose logs -f app
+# Nuclear option - reset everything:
+docker compose down -v
+docker compose up -d
 ```
 
-### Reset Everything
+---
 
-To start fresh (⚠️ this will delete all data):
+## 📚 Tech Stack
 
-```bash
-docker-compose down -v
-docker-compose up -d
-```
-
-## Production Considerations
-
-For production deployment:
-
-1. **Change default passwords** in `.env`
-2. **Use strong database credentials**
-3. **Set up SSL/TLS** with a reverse proxy (nginx/traefik)
-4. **Configure backups** for the database volume
-5. **Use environment-specific configurations**
-6. **Set up monitoring and logging**
-
-## License
-
-[Your License]
-
-## Support
-
-For issues and questions, please open an issue on GitHub.
+- **Runtime**: Bun
+- **Framework**: NestJS
+- **Database**: PostgreSQL
+- **ORM**: Prisma
+- **AI**: Groq API
+- **PDF**: PDFMake
