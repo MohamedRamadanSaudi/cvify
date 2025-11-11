@@ -360,6 +360,8 @@ body {
   display: flex;
   justify-content: space-between;
   align-items: center;
+  gap: 1rem;
+  flex-wrap: wrap;
 }
 
 .form-row {
@@ -370,18 +372,33 @@ body {
 
 .btn-add {
   background: transparent;
-  border: 1px solid var(--primary-color);
+  border: 1px dashed var(--primary-color);
   color: var(--primary-color);
   padding: 0.5rem 1rem;
   border-radius: 6px;
   font-size: 0.9rem;
   cursor: pointer;
   transition: all 0.2s ease;
+  font-weight: 500;
+  white-space: nowrap;
+  flex-shrink: 0;
 }
 
 .btn-add:hover {
   background: var(--primary-color);
   color: white;
+  border-style: solid;
+  transform: translateY(-1px);
+  box-shadow: 0 2px 8px rgba(99, 102, 241, 0.3);
+}
+
+.form-section-title .btn-add {
+  width: auto;
+  min-width: 150px;
+}
+
+.form-group .btn-add {
+  width: 100%;
 }
 
 .form-actions {
@@ -467,6 +484,92 @@ body {
   margin-bottom: 0;
   cursor: pointer;
   font-weight: normal;
+}
+
+/* Nested Items (for project links, etc.) */
+.nested-items {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  margin-bottom: 1rem;
+  padding: 1rem;
+  background: var(--background);
+  border-radius: 8px;
+  border: 1px dashed var(--border);
+  min-height: 60px;
+  transition: all 0.2s ease;
+}
+
+.nested-items:focus-within {
+  border-color: var(--primary-color);
+  background: rgba(99, 102, 241, 0.03);
+}
+
+.nested-items:empty {
+  border-style: dashed;
+}
+
+.nested-items:not(:empty) {
+  border-style: solid;
+}
+
+.nested-items:empty::before {
+  content: '📎 No links added yet. Click "Add Link" below to get started.';
+  color: var(--text-muted);
+  font-size: 0.9rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 44px;
+  gap: 0.5rem;
+}
+
+.nested-item {
+  background: var(--surface);
+  padding: 0.75rem;
+  border-radius: 6px;
+  border: 1px solid var(--border);
+  transition: all 0.2s ease;
+  animation: slideIn 0.3s ease-out;
+}
+
+@keyframes slideIn {
+  from {
+    opacity: 0;
+    transform: translateX(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+.nested-item:hover {
+  border-color: var(--primary-color);
+  background: var(--surface-light);
+}
+
+.nested-item .form-row {
+  display: grid;
+  grid-template-columns: 1fr 2fr auto;
+  gap: 0.75rem;
+  align-items: start;
+}
+
+.nested-item .form-group {
+  margin-bottom: 0;
+}
+
+.nested-item .form-group input {
+  padding: 0.6rem;
+  font-size: 0.95rem;
+}
+
+.nested-item .btn-remove {
+  margin-top: 0.15rem;
+  padding: 0.5rem 0.75rem;
+  font-size: 1rem;
+  flex-shrink: 0;
 }
 
 /* Profile Detail */
@@ -801,6 +904,19 @@ body {
   .detail-container,
   .history-container {
     padding: 1.5rem;
+  }
+
+  .form-row {
+    grid-template-columns: 1fr;
+  }
+
+  .nested-item .form-row {
+    grid-template-columns: 1fr;
+  }
+
+  .nested-item .btn-remove {
+    width: 100%;
+    margin-top: 0.5rem;
   }
 
   .toast {

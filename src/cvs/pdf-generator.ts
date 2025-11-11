@@ -159,6 +159,25 @@ export class PdfGenerator {
                   ],
                   margin: [0, 0, 0, 4],
                 },
+                ...(exp.links && exp.links.length > 0
+                  ? [
+                      {
+                        text: exp.links.flatMap((link: any, index: number) => [
+                          ...(index > 0
+                            ? [{ text: '  |  ', color: '#666666' }]
+                            : []),
+                          {
+                            text: link.type,
+                            link: link.url,
+                            color: '#0066cc',
+                            decoration: 'underline',
+                          },
+                        ]),
+                        style: 'experienceLinks',
+                        margin: [0, 0, 0, 3],
+                      },
+                    ]
+                  : []),
                 {
                   text: exp.description || '',
                   margin: [0, 0, 0, 12],
@@ -197,6 +216,27 @@ export class PdfGenerator {
                   margin: [0, 0, 0, 3],
                   alignment: 'justify',
                 },
+                ...(project.links && project.links.length > 0
+                  ? [
+                      {
+                        text: project.links.flatMap(
+                          (link: any, index: number) => [
+                            ...(index > 0
+                              ? [{ text: '  |  ', color: '#666666' }]
+                              : []),
+                            {
+                              text: link.type,
+                              link: link.url,
+                              color: '#0066cc',
+                              decoration: 'underline',
+                            },
+                          ],
+                        ),
+                        style: 'projectLinks',
+                        margin: [0, 0, 0, 3],
+                      },
+                    ]
+                  : []),
                 ...(project.technologies && project.technologies.length > 0
                   ? [
                       {
@@ -422,6 +462,14 @@ export class PdfGenerator {
           fontSize: 9,
           color: '#0066cc',
           italics: true,
+        },
+        experienceLinks: {
+          fontSize: 8.5,
+          color: '#0066cc',
+        },
+        projectLinks: {
+          fontSize: 8.5,
+          color: '#0066cc',
         },
       },
       defaultStyle: {

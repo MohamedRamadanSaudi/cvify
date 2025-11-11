@@ -745,6 +745,25 @@ function collectLinks() {
 
 // ============= EXPERIENCES =============
 
+window.addExperienceLink = function (expIndex) {
+  const container = document.getElementById(`exp-links-${expIndex}`);
+  const linkIndex = container.children.length;
+  const html = `
+    <div class="nested-item" data-link-index="${linkIndex}">
+      <div class="form-row">
+        <div class="form-group">
+          <input type="text" name="exp-${expIndex}-link-type-${linkIndex}" placeholder="e.g., Company Website, LinkedIn Post">
+        </div>
+        <div class="form-group">
+          <input type="url" name="exp-${expIndex}-link-url-${linkIndex}" placeholder="https://example.com">
+        </div>
+        <button type="button" class="btn-remove" onclick="removeItem(this.parentElement.parentElement)" title="Remove link">🗑️</button>
+      </div>
+    </div>
+  `;
+  container.insertAdjacentHTML('beforeend', html);
+};
+
 window.addExperience = function () {
   const container = document.getElementById('experiencesContainer');
   const index = container.children.length;
@@ -773,6 +792,13 @@ window.addExperience = function () {
           <label>Location</label>
           <input type="text" name="exp-location-${index}" placeholder="Mountain View, CA">
         </div>
+      </div>
+      <div class="form-group">
+        <label>Links</label>
+        <div id="exp-links-${index}" class="nested-items">
+          <!-- Experience links will be added here -->
+        </div>
+        <button type="button" class="btn-add" onclick="addExperienceLink(${index})">+ Add Link</button>
       </div>
       <div class="form-row">
         <div class="form-group">
@@ -818,6 +844,23 @@ function populateExperiences(experiences) {
       exp.employmentType || '';
     item.querySelector(`input[name="exp-location-${index}"]`).value =
       exp.location || '';
+
+    // Populate links
+    if (exp.links && exp.links.length > 0) {
+      exp.links.forEach((link) => {
+        globalThis.addExperienceLink(index);
+        const linksContainer = item.querySelector(`#exp-links-${index}`);
+        const lastLink = linksContainer.lastElementChild;
+        const linkIndex = lastLink.dataset.linkIndex;
+        lastLink.querySelector(
+          `input[name="exp-${index}-link-type-${linkIndex}"]`,
+        ).value = link.type || '';
+        lastLink.querySelector(
+          `input[name="exp-${index}-link-url-${linkIndex}"]`,
+        ).value = link.url || '';
+      });
+    }
+
     item.querySelector(`input[name="exp-startDate-${index}"]`).value =
       exp.startDate || '';
     item.querySelector(`input[name="exp-endDate-${index}"]`).value =
@@ -847,6 +890,24 @@ function collectExperiences() {
       `input[name="exp-companyName-${index}"]`,
     )?.value;
     if (jobTitle || companyName) {
+      // Collect experience links
+      const links = [];
+      const linksContainer = item.querySelector(`#exp-links-${index}`);
+      if (linksContainer) {
+        for (const linkItem of linksContainer.children) {
+          const linkIndex = linkItem.dataset.linkIndex;
+          const linkType = linkItem.querySelector(
+            `input[name="exp-${index}-link-type-${linkIndex}"]`,
+          )?.value;
+          const linkUrl = linkItem.querySelector(
+            `input[name="exp-${index}-link-url-${linkIndex}"]`,
+          )?.value;
+          if (linkType && linkUrl) {
+            links.push({ type: linkType, url: linkUrl });
+          }
+        }
+      }
+
       experiences.push({
         jobTitle,
         companyName,
@@ -855,6 +916,7 @@ function collectExperiences() {
         )?.value,
         location: item.querySelector(`input[name="exp-location-${index}"]`)
           ?.value,
+        links: links.length > 0 ? links : undefined,
         startDate: item.querySelector(`input[name="exp-startDate-${index}"]`)
           ?.value,
         endDate: item.querySelector(`input[name="exp-endDate-${index}"]`)
@@ -1005,6 +1067,25 @@ function collectEducation() {
 
 // ============= PROJECTS =============
 
+window.addProjectLink = function (projectIndex) {
+  const container = document.getElementById(`proj-links-${projectIndex}`);
+  const linkIndex = container.children.length;
+  const html = `
+    <div class="nested-item" data-link-index="${linkIndex}">
+      <div class="form-row">
+        <div class="form-group">
+          <input type="text" name="proj-${projectIndex}-link-type-${linkIndex}" placeholder="e.g., GitHub, Live Demo, Documentation">
+        </div>
+        <div class="form-group">
+          <input type="url" name="proj-${projectIndex}-link-url-${linkIndex}" placeholder="https://example.com">
+        </div>
+        <button type="button" class="btn-remove" onclick="removeItem(this.parentElement.parentElement)" title="Remove link">🗑️</button>
+      </div>
+    </div>
+  `;
+  container.insertAdjacentHTML('beforeend', html);
+};
+
 window.addProject = function () {
   const container = document.getElementById('projectsContainer');
   const index = container.children.length;
@@ -1025,6 +1106,13 @@ window.addProject = function () {
       <div class="form-group">
         <label>Technologies (comma-separated)</label>
         <input type="text" name="proj-technologies-${index}" placeholder="React, Node.js, MongoDB">
+      </div>
+      <div class="form-group">
+        <label>Links</label>
+        <div id="proj-links-${index}" class="nested-items">
+          <!-- Project links will be added here -->
+        </div>
+        <button type="button" class="btn-add" onclick="addProjectLink(${index})">+ Add Link</button>
       </div>
       <div class="form-row">
         <div class="form-group">
@@ -1064,6 +1152,23 @@ function populateProjects(projects) {
       proj.description || '';
     item.querySelector(`input[name="proj-technologies-${index}"]`).value =
       proj.technologies?.join(', ') || '';
+
+    // Populate links
+    if (proj.links && proj.links.length > 0) {
+      proj.links.forEach((link) => {
+        globalThis.addProjectLink(index);
+        const linksContainer = item.querySelector(`#proj-links-${index}`);
+        const lastLink = linksContainer.lastElementChild;
+        const linkIndex = lastLink.dataset.linkIndex;
+        lastLink.querySelector(
+          `input[name="proj-${index}-link-type-${linkIndex}"]`,
+        ).value = link.type || '';
+        lastLink.querySelector(
+          `input[name="proj-${index}-link-url-${linkIndex}"]`,
+        ).value = link.url || '';
+      });
+    }
+
     item.querySelector(`input[name="proj-startDate-${index}"]`).value =
       proj.startDate || '';
     item.querySelector(`input[name="proj-endDate-${index}"]`).value =
@@ -1091,6 +1196,25 @@ function collectProjects() {
       const techStr =
         item.querySelector(`input[name="proj-technologies-${index}"]`)?.value ||
         '';
+
+      // Collect project links
+      const links = [];
+      const linksContainer = item.querySelector(`#proj-links-${index}`);
+      if (linksContainer) {
+        for (const linkItem of linksContainer.children) {
+          const linkIndex = linkItem.dataset.linkIndex;
+          const linkType = linkItem.querySelector(
+            `input[name="proj-${index}-link-type-${linkIndex}"]`,
+          )?.value;
+          const linkUrl = linkItem.querySelector(
+            `input[name="proj-${index}-link-url-${linkIndex}"]`,
+          )?.value;
+          if (linkType && linkUrl) {
+            links.push({ type: linkType, url: linkUrl });
+          }
+        }
+      }
+
       projects.push({
         title,
         description: item.querySelector(
@@ -1100,6 +1224,7 @@ function collectProjects() {
           .split(',')
           .map((s) => s.trim())
           .filter((s) => s),
+        links: links.length > 0 ? links : undefined,
         startDate: item.querySelector(`input[name="proj-startDate-${index}"]`)
           ?.value,
         endDate: item.querySelector(`input[name="proj-endDate-${index}"]`)

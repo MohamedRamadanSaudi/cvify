@@ -50,6 +50,12 @@ You are an expert technical recruiter and CV optimization specialist. Your task 
       "companyName": "string",
       "employmentType": "string (Full-time, Part-time, Contract, etc.)",
       "location": "string",
+      "links": [
+        {
+          "type": "string (Company Website, LinkedIn Post, etc.)",
+          "url": "string"
+        }
+      ],
       "startDate": "string (YYYY-MM format)",
       "endDate": "string (YYYY-MM format or null if current)",
       "currentlyWorking": boolean,
