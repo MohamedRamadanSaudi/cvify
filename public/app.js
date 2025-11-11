@@ -36,7 +36,7 @@ function initializeEventListeners() {
     .addEventListener('click', () => showView('profiles'));
   document
     .getElementById('backFromGenerateBtn')
-    .addEventListener('click', () => showView('profiles'));
+    .addEventListener('click', () => showView('profileDetail'));
   document
     .getElementById('backFromHistoryBtn')
     .addEventListener('click', () => showView('profileDetail'));
