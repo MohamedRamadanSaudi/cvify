@@ -14,13 +14,11 @@ export class PdfGenerator {
         {
           text: cvData.fullName?.toUpperCase() || 'N/A',
           style: 'header',
-          margin: [0, 0, 0, 0],
           alignment: 'center',
         },
         {
           text: cvData.title || '',
           style: 'subheader',
-          margin: [0, 0, 0, 0],
           alignment: 'center',
         },
 
@@ -28,17 +26,27 @@ export class PdfGenerator {
         {
           text: [
             ...(cvData.email
-              ? [{ text: cvData.email, link: `mailto:${cvData.email}` }]
+              ? [
+                  {
+                    text: cvData.email,
+                    link: `mailto:${cvData.email}`,
+                    color: '#555555',
+                  },
+                ]
               : []),
-            ...(cvData.phone && cvData.email ? [{ text: '  |  ' }] : []),
-            ...(cvData.phone ? [{ text: cvData.phone }] : []),
+            ...(cvData.phone && cvData.email
+              ? [{ text: '  •  ', color: '#999999' }]
+              : []),
+            ...(cvData.phone ? [{ text: cvData.phone, color: '#555555' }] : []),
             ...(cvData.location && (cvData.email || cvData.phone)
-              ? [{ text: '  |  ' }]
+              ? [{ text: '  •  ', color: '#999999' }]
               : []),
-            ...(cvData.location ? [{ text: cvData.location }] : []),
+            ...(cvData.location
+              ? [{ text: cvData.location, color: '#555555' }]
+              : []),
           ],
           style: 'contact',
-          margin: [0, 0, 0, 3],
+          margin: [0, 0, 0, 4],
           alignment: 'center',
         },
 
@@ -47,17 +55,16 @@ export class PdfGenerator {
           ? [
               {
                 text: cvData.links.flatMap((link: any, index: number) => [
-                  ...(index > 0 ? [{ text: '  |  ', color: '#666666' }] : []),
+                  ...(index > 0 ? [{ text: '  •  ', color: '#999999' }] : []),
                   {
                     text: link.type,
                     link: link.url,
                     color: '#0066cc',
                     decoration: 'underline',
-                    bold: true,
                   },
                 ]),
                 style: 'links',
-                margin: [0, 0, 0, 5],
+                margin: [0, 0, 0, 8],
                 alignment: 'center',
               },
             ]
@@ -72,11 +79,11 @@ export class PdfGenerator {
               y1: 0,
               x2: 515,
               y2: 0,
-              lineWidth: 1,
-              lineColor: '#cccccc',
+              lineWidth: 1.5,
+              lineColor: '#0066cc',
             },
           ],
-          margin: [0, 0, 0, 12],
+          margin: [0, 0, 0, 8],
         },
 
         // Summary Section
@@ -88,8 +95,9 @@ export class PdfGenerator {
               },
               {
                 text: cvData.summary,
-                margin: [0, 0, 0, 12],
+                margin: [0, 0, 0, 16],
                 alignment: 'justify',
+                lineHeight: 1.5,
               },
             ]
           : []),
@@ -103,7 +111,8 @@ export class PdfGenerator {
               },
               {
                 text: cvData.skills.join('  •  '),
-                margin: [0, 0, 0, 12],
+                margin: [0, 0, 0, 16],
+                lineHeight: 1.5,
               },
             ]
           : []),
@@ -180,8 +189,9 @@ export class PdfGenerator {
                   : []),
                 {
                   text: exp.description || '',
-                  margin: [0, 0, 0, 12],
+                  margin: [0, 0, 0, 16],
                   alignment: 'justify',
+                  lineHeight: 1.5,
                 },
               ]),
             ]
@@ -242,13 +252,13 @@ export class PdfGenerator {
                       {
                         text: `Technologies: ${project.technologies.join(', ')}`,
                         style: 'technologies',
-                        margin: [0, 0, 0, 12],
+                        margin: [0, 0, 0, 16],
                       },
                     ]
                   : [
                       {
                         text: '',
-                        margin: [0, 0, 0, 12],
+                        margin: [0, 0, 0, 16],
                       },
                     ]),
               ]),
@@ -305,14 +315,15 @@ export class PdfGenerator {
                   ? [
                       {
                         text: edu.description,
-                        margin: [0, 0, 0, 12],
+                        margin: [0, 0, 0, 16],
                         alignment: 'justify',
+                        lineHeight: 1.5,
                       },
                     ]
                   : [
                       {
                         text: '',
-                        margin: [0, 0, 0, 12],
+                        margin: [0, 0, 0, 16],
                       },
                     ]),
               ]),
@@ -358,8 +369,9 @@ export class PdfGenerator {
                 },
                 {
                   text: activity.description || '',
-                  margin: [0, 0, 0, 12],
+                  margin: [0, 0, 0, 16],
                   alignment: 'justify',
+                  lineHeight: 1.5,
                 },
               ]),
             ]
@@ -407,8 +419,9 @@ export class PdfGenerator {
                 },
                 {
                   text: vol.description || '',
-                  margin: [0, 0, 0, 12],
+                  margin: [0, 0, 0, 16],
                   alignment: 'justify',
+                  lineHeight: 1.5,
                 },
               ]),
             ]
@@ -416,52 +429,58 @@ export class PdfGenerator {
       ],
       styles: {
         header: {
-          fontSize: 22,
+          fontSize: 24,
           bold: true,
-          color: '#000000',
-          characterSpacing: 1,
+          color: '#1a1a1a',
+          characterSpacing: 2,
+          margin: [0, 0, 0, 2],
         },
         subheader: {
-          fontSize: 13,
-          color: '#555555',
+          fontSize: 12,
+          color: '#4a4a4a',
           bold: false,
+          margin: [0, 0, 0, 8],
         },
         contact: {
-          fontSize: 8.5,
-          color: '#666666',
+          fontSize: 9,
+          color: '#555555',
         },
         links: {
-          fontSize: 8,
-          color: '#666666',
+          fontSize: 8.5,
+          color: '#555555',
         },
         sectionHeader: {
-          fontSize: 12,
+          fontSize: 13,
           bold: true,
-          color: '#000000',
-          margin: [0, 8, 0, 8],
+          color: '#1a1a1a',
+          margin: [0, 12, 0, 6],
+          decoration: 'underline',
+          decorationStyle: 'solid',
+          decorationColor: '#0066cc',
         },
         jobTitle: {
-          fontSize: 11,
+          fontSize: 11.5,
           bold: true,
-          color: '#000000',
+          color: '#1a1a1a',
         },
         company: {
           fontSize: 10,
-          color: '#333333',
+          color: '#4a4a4a',
         },
         date: {
           fontSize: 9,
           color: '#666666',
+          italics: false,
         },
         employmentType: {
-          fontSize: 9,
-          color: '#666666',
+          fontSize: 8.5,
+          color: '#777777',
           italics: true,
         },
         technologies: {
           fontSize: 9,
           color: '#0066cc',
-          italics: true,
+          bold: false,
         },
         experienceLinks: {
           fontSize: 8.5,
@@ -474,8 +493,8 @@ export class PdfGenerator {
       },
       defaultStyle: {
         fontSize: 10,
-        color: '#333333',
-        lineHeight: 1.3,
+        color: '#2a2a2a',
+        lineHeight: 1.4,
       },
     };
 
