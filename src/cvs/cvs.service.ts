@@ -80,8 +80,9 @@ export class CvsService {
       throw new Error(`Failed to parse CV data: ${error.message}`);
     }
 
-    // Generate PDF
-    const pdfBuffer = await PdfGenerator.generatePdf(cvData);
+    // Generate PDF with selected template
+    const template = generateCvDto.template || 'classic';
+    const pdfBuffer = await PdfGenerator.generatePdf(cvData, template);
 
     // Save PDF to uploads directory
     const timestamp = Date.now();
@@ -163,7 +164,7 @@ export class CvsService {
     return fs.readFileSync(fullPath);
   }
 
-  async regeneratePdf(id: number): Promise<Buffer | null> {
+  async regeneratePdf(id: number, template: string): Promise<Buffer | null> {
     // Get the CV record with cvData
     const cv = await this.prisma.cVs.findUnique({
       where: { id },
@@ -174,7 +175,7 @@ export class CvsService {
     }
 
     // Regenerate PDF from existing cvData
-    const pdfBuffer = await PdfGenerator.generatePdf(cv.cvData);
+    const pdfBuffer = await PdfGenerator.generatePdf(cv.cvData, template);
 
     // Optionally update the PDF file in uploads directory
     const fullPath = path.join(process.cwd(), cv.pdfPath);
@@ -226,5 +227,10 @@ export class CvsService {
     return this.prisma.cVs.delete({
       where: { id },
     });
+  }
+
+  // Get available CV templates
+  getAvailableTemplates() {
+    return PdfGenerator.getAvailableTemplates();
   }
 }

@@ -6,6 +6,7 @@ import {
   Param,
   Patch,
   Post,
+  Query,
   Res,
 } from '@nestjs/common';
 import { Response } from 'express';
@@ -15,6 +16,11 @@ import { GenerateCvDto } from './dto/generate-cv.dto';
 @Controller('cvs')
 export class CvsController {
   constructor(private readonly cvsService: CvsService) {}
+
+  @Get('templates')
+  async getTemplates() {
+    return this.cvsService.getAvailableTemplates();
+  }
 
   @Post('generate')
   async generate(@Body() generateCvDto: GenerateCvDto, @Res() res: Response) {
@@ -55,9 +61,13 @@ export class CvsController {
   }
 
   @Get(':id/regenerate')
-  async regeneratePdf(@Param('id') id: string, @Res() res: Response) {
+  async regeneratePdf(
+    @Param('id') id: string,
+    @Query('template') template: string,
+    @Res() res: Response,
+  ) {
     try {
-      const pdfBuffer = await this.cvsService.regeneratePdf(+id);
+      const pdfBuffer = await this.cvsService.regeneratePdf(+id, template);
 
       if (!pdfBuffer) {
         res.status(500).send('Failed to regenerate PDF');

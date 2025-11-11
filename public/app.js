@@ -269,6 +269,36 @@ async function loadProfilesForSelect() {
   if (currentProfile) {
     select.value = currentProfile.id;
   }
+
+  // Load templates
+  await loadTemplates();
+}
+
+// Load CV Templates
+async function loadTemplates() {
+  const select = document.getElementById('cvTemplate');
+
+  try {
+    const templates = await apiCall('/cvs/templates');
+
+    select.innerHTML =
+      '<option value="">Choose a template...</option>' +
+      templates
+        .map((template) => {
+          const name =
+            template.name.charAt(0).toUpperCase() + template.name.slice(1);
+          return `<option value="${template.name}">${name} - ${template.description}</option>`;
+        })
+        .join('');
+
+    // Select first template by default
+    if (templates.length > 0) {
+      select.value = templates[0].name;
+    }
+  } catch (error) {
+    console.error('Failed to load templates:', error);
+    select.innerHTML = '<option value="">Failed to load templates</option>';
+  }
 }
 
 // Generate CV
@@ -280,6 +310,7 @@ async function handleGenerateCv(e) {
   const data = {
     profileId: parseInt(formData.get('profileId')),
     jobDescription: formData.get('jobDescription'),
+    template: formData.get('template') || 'classic',
   };
 
   try {
