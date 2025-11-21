@@ -90,11 +90,9 @@ const Dashboard = () => {
             </p>
           </div>
 
-          <Button asChild variant="outline">
-            <Link to="/settings">
-              <Settings className="mr-2 h-4 w-4" />
-              Settings
-            </Link>
+          <Button variant="outline" onClick={() => {}}>
+            <Settings className="mr-2 h-4 w-4" />
+            Settings
           </Button>
         </div>
 
