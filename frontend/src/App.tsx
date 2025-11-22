@@ -5,7 +5,6 @@ import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { BrowserRouter, Route, Routes } from 'react-router-dom';
 import CreateProfile from './pages/CreateProfile';
 import Dashboard from './pages/Dashboard';
-import EditProfile from './pages/EditProfile';
 import GenerateCv from './pages/GenerateCv';
 import History from './pages/History';
 import NotFound from './pages/NotFound';
@@ -23,7 +22,7 @@ const App = () => (
           <Route path="/" element={<Dashboard />} />
           <Route path="/profiles/new" element={<CreateProfile />} />
           <Route path="/profiles/:id" element={<ProfileDetail />} />
-          <Route path="/profiles/:id/edit" element={<EditProfile />} />
+
           <Route path="/generate" element={<GenerateCv />} />
           <Route path="/history" element={<History />} />
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}

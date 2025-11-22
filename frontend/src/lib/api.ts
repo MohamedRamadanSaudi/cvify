@@ -24,38 +24,57 @@ export interface Profile {
   location?: string;
   summary?: string;
   skills?: string[];
-  links?: Array<{ label: string; url: string }>;
+  links?: Array<{
+    type: string;
+    url: string;
+  }>;
   education?: Array<{
-    institution: string;
+    schoolName: string;
     degree: string;
-    startDate?: string;
+    fieldOfStudy: string;
+    grade?: string;
+    startDate: string;
     endDate?: string;
     description?: string;
+    location?: string;
+    currentlyStudying?: boolean;
   }>;
   experiences?: Array<{
-    company: string;
-    position: string;
-    startDate?: string;
+    jobTitle: string;
+    companyName: string;
+    employmentType?: string;
+    location?: string;
+    links?: Array<{ type: string; url: string }>;
+    startDate: string;
     endDate?: string;
+    currentlyWorking?: boolean;
     description?: string;
   }>;
   projects?: Array<{
-    name: string;
+    title: string;
     description?: string;
-    startDate?: string;
-    endDate?: string;
     technologies?: string[];
+    links?: Array<{ type: string; url: string }>;
+    startDate: string;
+    endDate?: string;
+    currentlyOngoing?: boolean;
   }>;
   activities?: Array<{
-    name: string;
+    title: string;
     description?: string;
+    role?: string;
+    startDate: string;
+    endDate?: string;
+    currentlyOngoing?: boolean;
   }>;
   volunteering?: Array<{
-    organization: string;
-    role?: string;
-    startDate?: string;
-    endDate?: string;
+    organizationName: string;
     description?: string;
+    role: string;
+    location?: string;
+    startDate: string;
+    endDate?: string;
+    currentlyVolunteering?: boolean;
   }>;
   createdAt: string;
   updatedAt: string;
@@ -89,38 +108,57 @@ export interface UpdateProfileDto {
   location?: string;
   summary?: string;
   skills?: string[];
-  links?: Array<{ label: string; url: string }>;
+  links?: Array<{
+    type: string;
+    url: string;
+  }>;
   education?: Array<{
-    institution: string;
+    schoolName: string;
     degree: string;
-    startDate?: string;
+    fieldOfStudy: string;
+    grade?: string;
+    startDate: string;
     endDate?: string;
     description?: string;
+    location?: string;
+    currentlyStudying?: boolean;
   }>;
   experiences?: Array<{
-    company: string;
-    position: string;
-    startDate?: string;
+    jobTitle: string;
+    companyName: string;
+    employmentType?: string;
+    location?: string;
+    links?: Array<{ type: string; url: string }>;
+    startDate: string;
     endDate?: string;
+    currentlyWorking?: boolean;
     description?: string;
   }>;
   projects?: Array<{
-    name: string;
+    title: string;
     description?: string;
-    startDate?: string;
-    endDate?: string;
     technologies?: string[];
+    links?: Array<{ type: string; url: string }>;
+    startDate: string;
+    endDate?: string;
+    currentlyOngoing?: boolean;
   }>;
   activities?: Array<{
-    name: string;
+    title: string;
     description?: string;
+    role?: string;
+    startDate: string;
+    endDate?: string;
+    currentlyOngoing?: boolean;
   }>;
   volunteering?: Array<{
-    organization: string;
-    role?: string;
-    startDate?: string;
-    endDate?: string;
+    organizationName: string;
     description?: string;
+    role: string;
+    location?: string;
+    startDate: string;
+    endDate?: string;
+    currentlyVolunteering?: boolean;
   }>;
 }
 
