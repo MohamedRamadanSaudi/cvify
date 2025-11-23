@@ -76,6 +76,13 @@ export interface Profile {
     endDate?: string;
     currentlyVolunteering?: boolean;
   }>;
+  certificates?: Array<{
+    name: string;
+    issuer: string;
+    date: string;
+    url?: string;
+    summary?: string;
+  }>;
   createdAt: string;
   updatedAt: string;
 }
@@ -160,6 +167,13 @@ export interface UpdateProfileDto {
     startDate: string;
     endDate?: string;
     currentlyVolunteering?: boolean;
+  }>;
+  certificates?: Array<{
+    name: string;
+    issuer: string;
+    date: string;
+    url?: string;
+    summary?: string;
   }>;
 }
 

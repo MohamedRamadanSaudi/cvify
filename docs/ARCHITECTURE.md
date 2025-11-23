@@ -71,6 +71,7 @@ cvify/
 - projects (JSON)
 - activities (JSON)
 - volunteering (JSON)
+- certificates (JSON)
 - timestamps
 ```
 

@@ -1,5 +1,6 @@
 import { IsOptional, IsString } from 'class-validator';
 import { Activity } from '../types/activity.type';
+import { Certificate } from '../types/certificate.type';
 import { Education } from '../types/education.type';
 import { Experience } from '../types/experience.type';
 import { Link } from '../types/link.type';
@@ -48,4 +49,7 @@ export class UpdateProfileDto {
 
   @IsOptional()
   volunteering?: Volunteering[];
+
+  @IsOptional()
+  certificates?: Certificate[];
 }

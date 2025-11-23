@@ -2,7 +2,7 @@
 
 > Self-hosted CV generation and management platform powered by AI
 
-Built with NestJS, Bun, Prisma, PostgreSQL, and Groq AI.
+Built with React, NestJS, Bun, Prisma, PostgreSQL, and Groq AI.
 
 ---
 

@@ -426,6 +426,70 @@ export class PdfGenerator {
               ]),
             ]
           : []),
+
+        // Certificates Section
+        ...(cvData.certificates && cvData.certificates.length > 0
+          ? [
+              {
+                text: 'CERTIFICATES',
+                style: 'sectionHeader',
+              },
+              ...cvData.certificates.flatMap((cert: any) => [
+                {
+                  columns: [
+                    {
+                      stack: [
+                        {
+                          text: cert.name || '',
+                          style: 'jobTitle',
+                        },
+                        {
+                          text: cert.issuer || '',
+                          style: 'company',
+                          margin: [0, 2, 0, 0],
+                        },
+                      ],
+                      width: '*',
+                    },
+                    {
+                      text: cert.date || '',
+                      style: 'date',
+                      alignment: 'right',
+                      width: 'auto',
+                    },
+                  ],
+                  margin: [0, 0, 0, 4],
+                },
+                ...(cert.url
+                  ? [
+                      {
+                        text: 'View Certificate',
+                        link: cert.url,
+                        style: 'links',
+                        color: '#0066cc',
+                        decoration: 'underline',
+                        margin: [0, 0, 0, 3],
+                      },
+                    ]
+                  : []),
+                ...(cert.summary
+                  ? [
+                      {
+                        text: cert.summary,
+                        margin: [0, 0, 0, 16],
+                        alignment: 'justify',
+                        lineHeight: 1.5,
+                      },
+                    ]
+                  : [
+                      {
+                        text: '',
+                        margin: [0, 0, 0, 16],
+                      },
+                    ]),
+              ]),
+            ]
+          : []),
       ],
       styles: {
         header: {

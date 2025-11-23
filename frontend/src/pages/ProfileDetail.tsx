@@ -1,5 +1,6 @@
 import { ActivitiesForm } from '@/components/profile-forms/ActivitiesForm';
 import { BasicInfoForm } from '@/components/profile-forms/BasicInfoForm';
+import { CertificatesForm } from '@/components/profile-forms/CertificatesForm';
 import { EducationForm } from '@/components/profile-forms/EducationForm';
 import { ExperienceForm } from '@/components/profile-forms/ExperienceForm';
 import { LinksForm } from '@/components/profile-forms/LinksForm';
@@ -7,41 +8,45 @@ import { ProjectsForm } from '@/components/profile-forms/ProjectsForm';
 import { SkillsForm } from '@/components/profile-forms/SkillsForm';
 import { VolunteeringForm } from '@/components/profile-forms/VolunteeringForm';
 import {
-    AlertDialog,
-    AlertDialogAction,
-    AlertDialogCancel,
-    AlertDialogContent,
-    AlertDialogDescription,
-    AlertDialogFooter,
-    AlertDialogHeader,
-    AlertDialogTitle,
-    AlertDialogTrigger,
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
 } from '@/components/ui/alert-dialog';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import {
-    Dialog,
-    DialogContent,
-    DialogHeader,
-    DialogTitle,
-    DialogTrigger,
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
 } from '@/components/ui/dialog';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { useToast } from '@/hooks/use-toast';
 import { Profile, profilesApi } from '@/lib/api';
 import {
-    ArrowLeft,
-    Briefcase,
-    Edit,
-    FileText,
-    GraduationCap,
-    History,
-    Mail,
-    MapPin,
-    Phone,
-    Trash2,
-    User,
+  Activity,
+  ArrowLeft,
+  Award,
+  Briefcase,
+  Edit,
+  FileText,
+  GraduationCap,
+  HeartHandshake,
+  History,
+  LayoutDashboard,
+  Mail,
+  MapPin,
+  Phone,
+  Trash2,
+  User,
 } from 'lucide-react';
 import { useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
@@ -291,13 +296,35 @@ const ProfileDetail = () => {
           {/* Main Content */}
           <div className="lg:col-span-2">
             <Tabs defaultValue="overview" className="space-y-6">
-              <TabsList className="grid w-full grid-cols-3 lg:grid-cols-6">
-                <TabsTrigger value="overview">Overview</TabsTrigger>
-                <TabsTrigger value="experience">Experience</TabsTrigger>
-                <TabsTrigger value="education">Education</TabsTrigger>
-                <TabsTrigger value="projects">Projects</TabsTrigger>
-                <TabsTrigger value="activities">Activities</TabsTrigger>
-                <TabsTrigger value="volunteering">Volunteering</TabsTrigger>
+              <TabsList className="flex w-full overflow-x-auto no-scrollbar justify-start h-auto bg-muted/50 p-1 gap-1 rounded-xl border">
+                <TabsTrigger value="overview" className="flex-shrink-0 gap-1.5 text-xs px-2.5 data-[state=active]:bg-white data-[state=active]:text-primary data-[state=active]:shadow-sm">
+                  <LayoutDashboard className="h-3.5 w-3.5" />
+                  <span className="hidden sm:inline">Overview</span>
+                </TabsTrigger>
+                <TabsTrigger value="experience" className="flex-shrink-0 gap-1.5 text-xs px-2.5 data-[state=active]:bg-white data-[state=active]:text-primary data-[state=active]:shadow-sm">
+                  <Briefcase className="h-3.5 w-3.5" />
+                  <span className="hidden sm:inline">Experience</span>
+                </TabsTrigger>
+                <TabsTrigger value="education" className="flex-shrink-0 gap-1.5 text-xs px-2.5 data-[state=active]:bg-white data-[state=active]:text-primary data-[state=active]:shadow-sm">
+                  <GraduationCap className="h-3.5 w-3.5" />
+                  <span className="hidden sm:inline">Education</span>
+                </TabsTrigger>
+                <TabsTrigger value="projects" className="flex-shrink-0 gap-1.5 text-xs px-2.5 data-[state=active]:bg-white data-[state=active]:text-primary data-[state=active]:shadow-sm">
+                  <FileText className="h-3.5 w-3.5" />
+                  <span className="hidden sm:inline">Projects</span>
+                </TabsTrigger>
+                <TabsTrigger value="certificates" className="flex-shrink-0 gap-1.5 text-xs px-2.5 data-[state=active]:bg-white data-[state=active]:text-primary data-[state=active]:shadow-sm">
+                  <Award className="h-3.5 w-3.5" />
+                  <span className="hidden sm:inline">Certificates</span>
+                </TabsTrigger>
+                <TabsTrigger value="activities" className="flex-shrink-0 gap-1.5 text-xs px-2.5 data-[state=active]:bg-white data-[state=active]:text-primary data-[state=active]:shadow-sm">
+                  <Activity className="h-3.5 w-3.5" />
+                  <span className="hidden sm:inline">Activities</span>
+                </TabsTrigger>
+                <TabsTrigger value="volunteering" className="flex-shrink-0 gap-1.5 text-xs px-2.5 data-[state=active]:bg-white data-[state=active]:text-primary data-[state=active]:shadow-sm">
+                  <HeartHandshake className="h-3.5 w-3.5" />
+                  <span className="hidden sm:inline">Volunteering</span>
+                </TabsTrigger>
               </TabsList>
 
               <TabsContent value="overview" className="space-y-6">
@@ -558,6 +585,71 @@ const ProfileDetail = () => {
                 )}
               </TabsContent>
 
+              <TabsContent value="certificates" className="space-y-6">
+                {editingSection === 'certificates' ? (
+                  <CertificatesForm
+                    initialData={profile.certificates}
+                    onSave={(certificates) => handleSave({ certificates })}
+                    onCancel={() => setEditingSection(null)}
+                  />
+                ) : (
+                  <div className="space-y-4">
+                    <div className="flex justify-end">
+                      <Button
+                        variant="outline"
+                        onClick={() => setEditingSection('certificates')}
+                      >
+                        <Edit className="mr-2 h-4 w-4" />
+                        Edit Certificates
+                      </Button>
+                    </div>
+                    {profile.certificates && profile.certificates.length > 0 ? (
+                      profile.certificates.map((cert, index) => (
+                        <Card key={`cert-${index}`} className="p-6">
+                          <div className="mb-4 flex items-start gap-4">
+                            <div className="flex h-12 w-12 items-center justify-center rounded-lg bg-yellow-500/10">
+                              <Award className="h-6 w-6 text-yellow-600" />
+                            </div>
+                            <div className="flex-1">
+                              <h3 className="text-lg font-semibold">
+                                {cert.name}
+                              </h3>
+                              <p className="text-muted-foreground">
+                                {cert.issuer}
+                              </p>
+                              <div className="flex gap-2 text-sm text-muted-foreground">
+                                <span>{cert.date}</span>
+                              </div>
+                              {cert.url && (
+                                <a
+                                  href={cert.url}
+                                  target="_blank"
+                                  rel="noopener noreferrer"
+                                  className="text-sm text-primary hover:underline mt-1 block"
+                                >
+                                  View Certificate
+                                </a>
+                              )}
+                            </div>
+                          </div>
+                          {cert.summary && (
+                            <p className="text-muted-foreground">
+                              {cert.summary}
+                            </p>
+                          )}
+                        </Card>
+                      ))
+                    ) : (
+                      <Card className="p-6 text-center">
+                        <p className="text-muted-foreground">
+                          No certificates added yet.
+                        </p>
+                      </Card>
+                    )}
+                  </div>
+                )}
+              </TabsContent>
+
               <TabsContent value="activities" className="space-y-6">
                 {editingSection === 'activities' ? (
                   <ActivitiesForm
@@ -579,20 +671,27 @@ const ProfileDetail = () => {
                     {profile.activities && profile.activities.length > 0 ? (
                       profile.activities.map((activity, index) => (
                         <Card key={`activity-${index}`} className="p-6">
-                          <h3 className="mb-1 text-lg font-semibold">
-                            {activity.title}
-                          </h3>
-                          {activity.role && (
-                            <p className="text-sm font-medium text-muted-foreground mb-2">
-                              {activity.role}
-                            </p>
-                          )}
-                          <p className="text-sm text-muted-foreground mb-2">
-                            {activity.startDate} -{' '}
-                            {activity.currentlyOngoing
-                              ? 'Present'
-                              : activity.endDate}
-                          </p>
+                          <div className="mb-4 flex items-start gap-4">
+                            <div className="flex h-12 w-12 items-center justify-center rounded-lg bg-primary/10">
+                              <Activity className="h-6 w-6 text-primary" />
+                            </div>
+                            <div className="flex-1">
+                              <h3 className="text-lg font-semibold">
+                                {activity.title}
+                              </h3>
+                              {activity.role && (
+                                <p className="text-sm font-medium text-muted-foreground mb-1">
+                                  {activity.role}
+                                </p>
+                              )}
+                              <p className="text-sm text-muted-foreground">
+                                {activity.startDate} -{' '}
+                                {activity.currentlyOngoing
+                                  ? 'Present'
+                                  : activity.endDate}
+                              </p>
+                            </div>
+                          </div>
                           {activity.description && (
                             <p className="text-muted-foreground">
                               {activity.description}
@@ -634,7 +733,7 @@ const ProfileDetail = () => {
                         <Card key={`vol-${index}`} className="p-6">
                           <div className="mb-4 flex items-start gap-4">
                             <div className="flex h-12 w-12 items-center justify-center rounded-lg bg-primary/10">
-                              <User className="h-6 w-6 text-primary" />
+                              <HeartHandshake className="h-6 w-6 text-primary" />
                             </div>
                             <div className="flex-1">
                               <h3 className="text-lg font-semibold">

@@ -28,6 +28,7 @@ Stores user profile information.
 | projects     | JSONB     | DEFAULT []                  | Projects                  |
 | activities   | JSONB     | DEFAULT []                  | Activities                |
 | volunteering | JSONB     | DEFAULT []                  | Volunteering              |
+| certificates | JSONB     | DEFAULT []                  | Certificates              |
 | createdAt    | TIMESTAMP | DEFAULT NOW()               | Created timestamp         |
 | updatedAt    | TIMESTAMP | AUTO UPDATE                 | Updated timestamp         |
 
@@ -136,6 +137,20 @@ Profiles (1) ----< (N) CVs
     "startDate": "2020",
     "endDate": "2022",
     "description": "What you contributed..."
+  }
+]
+```
+
+### Certificates
+
+```json
+[
+  {
+    "name": "Certificate Name",
+    "issuer": "What the certificate does...",
+    "date": "Tech stack used",
+    "url": "https://certificate-url.com",
+    "summary": "What you contributed..."
   }
 ]
 ```

@@ -108,3 +108,13 @@ All colors MUST be HSL.
     @apply font-semibold tracking-tight;
   }
 }
+
+@layer utilities {
+  .no-scrollbar::-webkit-scrollbar {
+    display: none;
+  }
+  .no-scrollbar {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+}

@@ -22,6 +22,7 @@ model Profiles {
   education    Json[]
   experiences  Json[]
   projects     Json[]
+  certificates Json[]
   activities   Json[]
   volunteering Json[]
   cvs          CVs[]

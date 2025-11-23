@@ -90,7 +90,16 @@ Content-Type: application/json
   ],
   "projects": [],
   "activities": [],
-  "volunteering": []
+  "volunteering": [],
+  "certificates": [
+    {
+      "name": "Certified Kubernetes Administrator",
+      "issuer": "CNCF",
+      "date": "2023-05",
+      "url": "https://...",
+      "summary": "..."
+    }
+  ]
 }
 ```
 

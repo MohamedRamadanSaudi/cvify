@@ -111,6 +111,15 @@ You are an expert technical recruiter and CV optimization specialist. Your task 
       "endDate": "string (YYYY-MM format or null if current)",
       "currentlyVolunteering": boolean
     }
+  ],
+  "certificates": [
+    {
+      "name": "string",
+      "issuer": "string",
+      "date": "string (YYYY-MM format)",
+      "url": "string (optional)",
+      "summary": "string (optional)"
+    }
   ]
 }
 ```

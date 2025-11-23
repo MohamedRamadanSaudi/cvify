@@ -193,7 +193,6 @@ Fixes #123
 
 - Add new profile fields
 - Improve PDF styling
-- Add search functionality
 - Add profile export/import
 
 ### Advanced Tasks
