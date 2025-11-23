@@ -20,6 +20,14 @@ import {
   DialogHeader,
   DialogTitle,
 } from '@/components/ui/dialog';
+import { Input } from '@/components/ui/input';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select';
 import { Textarea } from '@/components/ui/textarea';
 import {
   Tooltip,
@@ -34,6 +42,7 @@ import {
   Edit,
   FileText,
   RefreshCw,
+  Search,
   Trash2,
 } from 'lucide-react';
 import { useEffect, useState } from 'react';
@@ -49,6 +58,8 @@ const History = () => {
   const [editingCv, setEditingCv] = useState<CV | null>(null);
   const [cvDataJson, setCvDataJson] = useState<string>('');
   const [jsonError, setJsonError] = useState<string>('');
+  const [searchQuery, setSearchQuery] = useState('');
+  const [selectedProfileId, setSelectedProfileId] = useState<string>('all');
 
   useEffect(() => {
     loadCvs();
@@ -202,6 +213,26 @@ const History = () => {
     }
   };
 
+  // Extract unique profiles for filter
+  const uniqueProfiles = Array.from(
+    new Map(
+      cvs
+        .filter((cv) => cv.profile)
+        .map((cv) => [cv.profile!.id, cv.profile!])
+    ).values()
+  );
+
+  // Filter CVs
+  const filteredCvs = cvs.filter((cv) => {
+    const matchesProfile =
+      selectedProfileId === 'all' ||
+      cv.profileId.toString() === selectedProfileId;
+    const matchesSearch = cv.jobDescription
+      .toLowerCase()
+      .includes(searchQuery.toLowerCase());
+    return matchesProfile && matchesSearch;
+  });
+
   return (
     <div className="min-h-screen bg-gradient-subtle py-12 px-6">
       <div className="container mx-auto max-w-7xl">
@@ -212,11 +243,44 @@ const History = () => {
           </Button>
         </div>
 
-        <div className="mb-8">
-          <h1 className="mb-2 text-3xl font-bold">CV History</h1>
-          <p className="text-muted-foreground">
-            View and manage all your generated CVs
-          </p>
+        <div className="mb-8 flex flex-col gap-6 md:flex-row md:items-end md:justify-between">
+          <div>
+            <h1 className="mb-2 text-3xl font-bold">CV History</h1>
+            <p className="text-muted-foreground">
+              View and manage all your generated CVs
+            </p>
+          </div>
+
+          <div className="flex flex-col gap-4 sm:flex-row sm:items-center">
+            <div className="w-full sm:w-[200px]">
+              <Select
+                value={selectedProfileId}
+                onValueChange={setSelectedProfileId}
+              >
+                <SelectTrigger>
+                  <SelectValue placeholder="Filter by Profile" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="all">All Profiles</SelectItem>
+                  {uniqueProfiles.map((profile) => (
+                    <SelectItem key={profile.id} value={profile.id.toString()}>
+                      {profile.profileName || profile.fullName || 'Unknown Profile'}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
+
+            <div className="relative w-full sm:w-[300px]">
+              <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+              <Input
+                placeholder="Search job descriptions..."
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                className="pl-9"
+              />
+            </div>
+          </div>
         </div>
 
         {isLoading ? (
@@ -226,21 +290,26 @@ const History = () => {
             </div>
             <p className="text-muted-foreground">Loading CV history...</p>
           </Card>
-        ) : cvs.length === 0 ? (
+        ) : filteredCvs.length === 0 ? (
           <Card className="p-12 text-center">
             <div className="mx-auto mb-4 flex h-20 w-20 items-center justify-center rounded-full bg-primary/10">
               <FileText className="h-10 w-10 text-primary" />
             </div>
-            <h3 className="mb-2 text-xl font-semibold">No CVs yet</h3>
+            <h3 className="mb-2 text-xl font-semibold">
+              {cvs.length === 0 ? 'No CVs yet' : 'No matching CVs'}
+            </h3>
             <p className="mb-6 text-muted-foreground">
-              You haven't generated any CVs yet. Create a profile and generate
-              your first CV!
+              {cvs.length === 0
+                ? "You haven't generated any CVs yet. Create a profile and generate your first CV!"
+                : 'Try adjusting your filters or search query.'}
             </p>
-            <Button onClick={() => navigate('/')}>Go to Dashboard</Button>
+            {cvs.length === 0 && (
+              <Button onClick={() => navigate('/')}>Go to Dashboard</Button>
+            )}
           </Card>
         ) : (
           <div className="space-y-4">
-            {cvs.map((cv) => (
+            {filteredCvs.map((cv) => (
               <Card
                 key={cv.id}
                 className="overflow-hidden transition-all hover:shadow-lg"
@@ -255,7 +324,7 @@ const History = () => {
                       <div className="mb-2 flex items-start justify-between gap-4">
                         <div className="flex-1 min-w-0">
                           <h3 className="mb-1 text-lg font-semibold">
-                            {cv.profile?.fullName || 'CV'} - Generated CV
+                            {cv.profile?.profileName || 'CV'}
                           </h3>
                           <p className="text-sm text-muted-foreground">
                             {cv.profile?.email}
@@ -291,7 +360,7 @@ const History = () => {
                   </div>
 
                   <div className="mt-4 flex flex-wrap gap-2 border-t pt-4">
-                    <Tooltip>
+                    <Tooltip delayDuration={0}>
                       <TooltipTrigger asChild>
                         <Button
                           size="sm"
@@ -310,7 +379,7 @@ const History = () => {
                       </TooltipContent>
                     </Tooltip>
 
-                    <Tooltip>
+                    <Tooltip delayDuration={0}>
                       <TooltipTrigger asChild>
                         <Button
                           size="sm"
@@ -336,7 +405,7 @@ const History = () => {
                       </TooltipContent>
                     </Tooltip>
 
-                    <Tooltip>
+                    <Tooltip delayDuration={0}>
                       <TooltipTrigger asChild>
                         <Button
                           size="sm"

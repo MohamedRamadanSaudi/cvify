@@ -110,6 +110,7 @@ export class CvsService {
         profile: {
           select: {
             id: true,
+            profileName: true,
             email: true,
             fullName: true,
           },

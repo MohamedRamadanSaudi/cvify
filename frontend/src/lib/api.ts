@@ -91,6 +91,7 @@ export interface CV {
     id: number;
     email: string;
     fullName?: string;
+    profileName?: string;
   };
 }
 

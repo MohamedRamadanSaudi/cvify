@@ -1,14 +1,16 @@
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
+import { Input } from '@/components/ui/input';
 import { useToast } from '@/hooks/use-toast';
 import { Profile, profilesApi } from '@/lib/api';
-import { FileText, History, Plus, Settings } from 'lucide-react';
+import { FileText, History, Plus, Search } from 'lucide-react';
 import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 
 const Dashboard = () => {
   const [profiles, setProfiles] = useState<Profile[]>([]);
   const [isLoading, setIsLoading] = useState(true);
+  const [searchQuery, setSearchQuery] = useState('');
   const { toast } = useToast();
 
   useEffect(() => {
@@ -33,6 +35,10 @@ const Dashboard = () => {
       setIsLoading(false);
     }
   };
+
+  const filteredProfiles = profiles.filter((profile) =>
+    profile.profileName.toLowerCase().includes(searchQuery.toLowerCase())
+  );
 
   return (
     <div className="min-h-screen">
@@ -82,7 +88,7 @@ const Dashboard = () => {
 
       {/* Profiles Section */}
       <section className="container mx-auto max-w-7xl px-6 py-12">
-        <div className="mb-8 flex items-center justify-between">
+        <div className="mb-8 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
           <div>
             <h2 className="text-2xl font-bold">Your Profiles</h2>
             <p className="text-muted-foreground">
@@ -90,10 +96,15 @@ const Dashboard = () => {
             </p>
           </div>
 
-          <Button variant="outline" onClick={() => {}}>
-            <Settings className="mr-2 h-4 w-4" />
-            Settings
-          </Button>
+          <div className="relative w-full max-w-sm">
+            <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+            <Input
+              placeholder="Search profiles..."
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              className="pl-9"
+            />
+          </div>
         </div>
 
         {isLoading ? (
@@ -103,25 +114,31 @@ const Dashboard = () => {
             </div>
             <p className="text-muted-foreground">Loading profiles...</p>
           </Card>
-        ) : profiles.length === 0 ? (
+        ) : filteredProfiles.length === 0 ? (
           <Card className="p-12 text-center">
             <div className="mx-auto mb-4 flex h-20 w-20 items-center justify-center rounded-full bg-primary/10">
               <FileText className="h-10 w-10 text-primary" />
             </div>
-            <h3 className="mb-2 text-xl font-semibold">No profiles yet</h3>
+            <h3 className="mb-2 text-xl font-semibold">
+              {searchQuery ? 'No profiles found' : 'No profiles yet'}
+            </h3>
             <p className="mb-6 text-muted-foreground">
-              Create your first profile to start generating professional CVs
+              {searchQuery
+                ? `No profiles match "${searchQuery}"`
+                : 'Create your first profile to start generating professional CVs'}
             </p>
-            <Button asChild className="bg-gradient-primary">
-              <Link to="/profiles/new">
-                <Plus className="mr-2 h-5 w-5" />
-                Create Your First Profile
-              </Link>
-            </Button>
+            {!searchQuery && (
+              <Button asChild className="bg-gradient-primary">
+                <Link to="/profiles/new">
+                  <Plus className="mr-2 h-5 w-5" />
+                  Create Your First Profile
+                </Link>
+              </Button>
+            )}
           </Card>
         ) : (
           <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-            {profiles.map((profile) => (
+            {filteredProfiles.map((profile) => (
               <Card
                 key={profile.id}
                 className="group relative overflow-hidden transition-all hover:shadow-lg"
