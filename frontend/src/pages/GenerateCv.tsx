@@ -18,6 +18,15 @@ const GenerateCv = () => {
   const [isGenerating, setIsGenerating] = useState(false);
   const [generatedCvBlob, setGeneratedCvBlob] = useState<Blob | null>(null);
 
+  // Helper function to count words
+  const getWordCount = (text: string): number => {
+    return text.trim().split(/\s+/).filter(word => word.length > 0).length;
+  };
+
+  const MIN_WORD_COUNT = 10;
+  const wordCount = getWordCount(jobDescription);
+  const isJobDescriptionValid = wordCount >= MIN_WORD_COUNT;
+
   const handleGenerate = async (e: React.FormEvent) => {
     e.preventDefault();
 
@@ -25,6 +34,15 @@ const GenerateCv = () => {
       toast({
         title: 'Error',
         description: 'No profile selected.',
+        variant: 'destructive',
+      });
+      return;
+    }
+
+    if (!isJobDescriptionValid) {
+      toast({
+        title: 'Job Description Too Short',
+        description: `Please provide a more detailed job description. Minimum ${MIN_WORD_COUNT} words required.`,
         variant: 'destructive',
       });
       return;
@@ -110,15 +128,24 @@ const GenerateCv = () => {
                     required
                     className="min-h-[300px] text-base"
                   />
-                  <p className="text-sm text-muted-foreground">
-                    Include job requirements, responsibilities, and desired
-                    qualifications
-                  </p>
+                  <div className="flex items-center justify-between">
+                    <p className="text-sm text-muted-foreground">
+                      Include job requirements, responsibilities, and desired
+                      qualifications
+                    </p>
+                    <p className={`text-sm font-medium ${
+                        isJobDescriptionValid
+                          ? 'text-green-600'
+                          : 'text-muted-foreground'
+                      }`}>
+                      {wordCount}/{MIN_WORD_COUNT} words
+                    </p>
+                  </div>
                 </div>
 
                 <Button
                   type="submit"
-                  disabled={isGenerating || !jobDescription.trim()}
+                  disabled={isGenerating || !isJobDescriptionValid}
                   className="w-full bg-gradient-accent shadow-lg transition-all hover:scale-105 hover:shadow-xl"
                 >
                   <Sparkles className="mr-2 h-5 w-5" />
