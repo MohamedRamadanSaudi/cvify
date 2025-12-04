@@ -22,8 +22,21 @@ export const ProjectsForm = ({
 }: ProjectsFormProps) => {
   const [projectList, setProjectList] = useState(initialData || []);
   const [isSaving, setIsSaving] = useState(false);
+  // Store raw input strings for technologies to preserve commas while typing
+  const [technologiesInput, setTechnologiesInput] = useState<Record<number, string>>(() => {
+    const initialInputs: Record<number, string> = {};
+    (initialData || []).forEach((project, index) => {
+      if (project.technologies && project.technologies.length > 0) {
+        initialInputs[index] = project.technologies.join(', ');
+      } else {
+        initialInputs[index] = '';
+      }
+    });
+    return initialInputs;
+  });
 
   const addProject = () => {
+    const newIndex = projectList.length;
     setProjectList([
       ...projectList,
       {
@@ -36,10 +49,25 @@ export const ProjectsForm = ({
         links: [],
       },
     ]);
+    setTechnologiesInput({ ...technologiesInput, [newIndex]: '' });
   };
 
   const removeProject = (index: number) => {
     setProjectList(projectList.filter((_, i) => i !== index));
+    // Clean up technologies input for removed project
+    const newInputs = { ...technologiesInput };
+    delete newInputs[index];
+    // Reindex remaining inputs
+    const reindexed: Record<number, string> = {};
+    Object.keys(newInputs).forEach((key) => {
+      const oldIndex = parseInt(key);
+      if (oldIndex < index) {
+        reindexed[oldIndex] = newInputs[oldIndex];
+      } else if (oldIndex > index) {
+        reindexed[oldIndex - 1] = newInputs[oldIndex];
+      }
+    });
+    setTechnologiesInput(reindexed);
   };
 
   const updateProject = (index: number, field: string, value: any) => {
@@ -52,7 +80,16 @@ export const ProjectsForm = ({
     e.preventDefault();
     setIsSaving(true);
     try {
-      await onSave(projectList);
+      // Parse all technologies inputs before saving
+      const projectsWithParsedTech = projectList.map((project, index) => {
+        const inputValue = technologiesInput[index] || '';
+        const technologies = inputValue
+          .split(',')
+          .map((t) => t.trim())
+          .filter(Boolean);
+        return { ...project, technologies };
+      });
+      await onSave(projectsWithParsedTech);
     } finally {
       setIsSaving(false);
     }
@@ -132,14 +169,29 @@ export const ProjectsForm = ({
               <div className="space-y-2">
                 <Label>Technologies (comma separated)</Label>
                 <Input
-                  value={project.technologies?.join(', ') || ''}
-                  onChange={(e) =>
-                    updateProject(
-                      index,
-                      'technologies',
-                      e.target.value.split(',').map((t) => t.trim()).filter(Boolean)
-                    )
-                  }
+                  value={technologiesInput[index] ?? project.technologies?.join(', ') ?? ''}
+                  onChange={(e) => {
+                    const value = e.target.value;
+                    // Store raw input string to preserve commas while typing
+                    setTechnologiesInput({ ...technologiesInput, [index]: value });
+                    // Parse and update technologies array (filter out empty strings)
+                    const technologies = value
+                      .split(',')
+                      .map((t) => t.trim())
+                      .filter(Boolean);
+                    updateProject(index, 'technologies', technologies);
+                  }}
+                  onBlur={() => {
+                    // On blur, ensure the displayed value matches the parsed technologies
+                    const inputValue = technologiesInput[index] || '';
+                    const parsed = inputValue
+                      .split(',')
+                      .map((t) => t.trim())
+                      .filter(Boolean);
+                    if (parsed.join(', ') !== inputValue.trim()) {
+                      setTechnologiesInput({ ...technologiesInput, [index]: parsed.join(', ') });
+                    }
+                  }}
                   placeholder="React, Node.js, TypeScript"
                 />
               </div>
